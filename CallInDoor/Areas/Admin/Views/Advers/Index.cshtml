@@ -1,0 +1,1124 @@
+﻿
+@{
+    ViewData["Title"] = "مدیریت آگهی ها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    <link rel="~/stylesheet" href="vendors/dataTable/dataTables.min.css" type="text/css">
+    <style>
+        .pagination > li {
+            margin-left: 1%;
+            cursor: pointer;
+        }
+
+        .selectedLi {
+            color: red;
+        }
+
+        label {
+            padding-top: 10px;
+            vertical-align: top;
+        }
+
+        #filtering {
+            vertical-align: text-bottom;
+        }
+
+        #changeAdverStatusBtn {
+            border: 1px solid black;
+            background: #ddd;
+        }
+
+        .error {
+            animation-name: example;
+            animation-duration: 1.6s;
+        }
+
+        @@keyframes example {
+            0% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            10% {
+                border-color: white;
+                width: 100%;
+                height: 99%;
+            }
+
+            20% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            30% {
+                border-color: white;
+                width: 100%;
+                height: 99%;
+            }
+
+            40% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            50% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            60% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+
+            70% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            80% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+
+            90% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            100% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+        }
+    </style>
+
+
+}
+<form id="sorting">
+
+    <div class="form-group " style="margin-top:3%">
+        <label for="exampleInputEmail1">نوع  آگهی</label>
+        <select class="custom-select mb-3 col-2" id="isImmediately">
+            <option selected> </option>
+            <option value="false">معمولی</option>
+            <option value="true">فوری</option>
+        </select>
+        <label for="exampleInputPassword1">وضعیت آگهی</label>
+        <select class="custom-select mb-3 col-2" id="adverStatus">
+            <option selected></option>
+            <option value="1">فعال</option>
+            <option value="2">پیش نویس </option>
+            <option value="3">آرشیو</option>
+            <option value="4">پایان یافته</option>
+            <option value="5">غیرفعال</option>
+            <option value="6">منقضی شده</option>
+        </select>
+        <label for="exampleInputPassword1">وضعیت تایید ادمین</label>
+        <select class="custom-select mb-3 col-2" id="adverCreateStatus">
+            <option selected></option>
+            <option value="1">در حال بررسی</option>
+            <option value="2">رد شده</option>
+            <option value="3">پذیرفته شده</option>
+            <option value="4">برگشت خورده</option>
+        </select>
+        <label for="exampleInputPassword1">شهر</label>
+        <select class="custom-select mb-3 col-2" id="adverCities">
+            <option selected></option>
+            @foreach (var item in ViewBag.Cities)
+            {
+                <option value="@item.CityDivisionCode">@item.ProvinceName , @item.CityName</option>
+            }
+        </select>
+        <button id="filtering" type="submit" class="btn btn-primary col-2">مرتب سازی</button>
+
+    </div>
+
+</form>
+
+<button type="button" id="rejectResultBtn" class="btn btn-primary mr-2 mb-2 d-none" data-toggle="modal" data-target="#rejectResult">
+</button>
+<button type="button" id="changeStatusBtn" class="d-none" data-toggle="modal" data-target="#changeStatus">
+</button>
+
+
+
+<a id="downloadImage" download="adverImage">Save "Bad Romance" to your computer</a>
+
+<hr />
+<div class="table-responsive">
+    <table id="myTable" class="table table-striped table-bordered ">
+        <thead>
+            <tr>
+
+                <th>#</th>
+                <th>عنوان</th>
+                <th>شهر</th>
+                <th>نوع همکاری</th>
+                <th>حقوق</th>
+                <th>سابقه کار</th>
+                <th>مدرک تحصیلی</th>
+                <th> جنسیت</th>
+                <th>خدمت سربازی</th>
+                <th>توضیح مختصر</th>
+                <th>دسته بندی شغلی</th>
+                <th>نام شرکت</th>
+                @*<th>قالب</th>*@
+                <th> جزییات آگهی</th>
+                <th> نوع آگهی</th>
+                <th> دانلود عکس آگهی</th>
+                <th> گزارش آگهی</th>
+                <th>  وضعیت آگهی</th>
+                <th>  تایید ایجاد آگهی </th>
+            </tr>
+        </thead>
+        <tbody id="rewsOfTable">
+        </tbody>
+    </table>
+</div>
+<ul class="pagination" style=" direction: ltr; ">
+</ul>
+
+
+
+<!--CreateModal-->
+<div class="modal fade" tabindex="-1" role="dialog" id="rejectResult">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">نمایش کامل توضیحات</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <p id="modalParagraph">
+
+
+                    </p>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-danger w-25 mx-auto" style="display:block;text-align:center; margin-left:35%" data-dismiss="modal">بستن</button>
+                @*<button type="button" class="btn btn-primary">اعمال تغییرات</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="AdverDetailModal">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">جزییات آگهی</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="adverDetailForm">
+
+                    <div class="form-group">
+                        <label>عنوان:</label>
+                        <input class="form-control" id="adverTitle" />
+                    </div>
+                    <div class="form-group">
+                        <label>ایمیل:</label>
+                        <input class="form-control" id="adverEmail" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>تلفن همراه:</label>
+                        <input class="form-control" id="adverPhoneNumber" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>آدرس:</label>
+                        <textarea class="form-control" id="adverAddress" rows="2"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>توضیحات:</label>
+                        <textarea class="form-control" id="adverDesc" rows="2"></textarea>
+                    </div>
+                    <input hidden id="adverId" />
+
+                    <button onclick="adverDetailFormSubmit()" type="button" class="btn btn-success">ثبت</button>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-danger w-25 mx-auto" style="display:block;text-align:center; margin-left:35%" data-dismiss="modal">بستن</button>
+                @*<button type="button" class="btn btn-primary">اعمال تغییرات</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="changeStatus">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تایید آگهی</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="changeStatusClose">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="changeAdverStatusForm">
+
+                    <div class="form-group ">
+                        <label for="adverCreateStatusInModal">وضعیت آگهی:</label>
+
+                        <select class="custom-select mb-3" id="adverCreateStatusInModal">
+                            <option value="1">در حال بررسی</option>
+                            <option value="2">رد شده</option>
+                            <option value="3">پذیرفته شده</option>
+                            <option value="4">برگشت خورده</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminDescription">توضیحات ادمین:</label>
+                        <textarea class="form-control" id="adminDescription"
+                                  placeholder="لطفا توضیحات لازم را وارد کنید..."></textarea>
+                    </div>
+
+                    <button type="submit" id="changeAdverStatusBtn" class="btn btn-block">ثبت</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="adverTemplateModal">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">قالب آگهی</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="changeStatusClose">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+
+                    <div class="form-group ">
+                        <div id="oldTemplate" style="background-color:#ccc;color: #000;font-size: 40px;width:100%;height: 60px;">تم قالب فعلی</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>تم جدید</label>
+                        <select class="form-control" id="templates">
+                        </select>
+                        <input hidden id="advertId" />
+                    </div>
+
+                    <button type="submit" onclick="submitChangeTemplate()" class="btn btn-block">ثبت</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+
+    <script src="~/vendors/dataTable/jquery.dataTables.min.js"></script>
+
+    <!-- Bootstrap 4 and responsive compatibility -->
+    <script src="~/vendors/dataTable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendors/dataTable/dataTables.responsive.min.js"></script>
+    <script>
+
+
+        CKEDITOR.replace('adverDesc', {
+            language: 'fa',
+            uiColor: '#d9d9d9',
+            contentsLangDirection: 'rtl',
+            extraAllowedContent: 'br(*)',
+        });
+
+
+        //$(".target").change(function () {
+        //    alert("Handler for .change() called.");
+        //});
+
+        $("#myTable_filter >label>input").on("change", function () {
+            console.log(e.target)
+            console.log(e.target.value)
+            console.log("sss")
+
+        });
+
+
+
+        //console.log($("#myTable_filter >label>input").val())
+        //$("#myTable_filter >label>input").change(function (e) {
+        //    console.log(e.target)
+        //    console.log(e.target.value)
+        //    console.log("sss")
+        //})
+
+
+
+        //isInputValid(e) {
+        //    let val = e.target?.value;
+        //    let phonenumber = e.target?.value
+        //    if (phonenumber.match(/[۰]/g)) {
+        //        phonenumber = phonenumber.replace(/[۰]/g, '0');
+        //    }
+        //    if (phonenumber.match(/[۱]/g)) {
+        //        phonenumber = phonenumber.replace(/[۱]/g, '1');
+        //    }
+        //    if (phonenumber.match(/[۲]/g)) {
+        //        phonenumber = phonenumber.replace(/[۲]/g, '2');
+        //    }
+        //    if (phonenumber.match(/[۳]/g)) {
+        //        phonenumber = phonenumber.replace(/[۳]/g, '3');
+        //    }
+        //    if (phonenumber.match(/[۴]/g)) {
+        //        phonenumber = phonenumber.replace(/[۴]/g, '4');
+        //    }
+        //    if (phonenumber.match(/[۵]/g)) {
+        //        phonenumber = phonenumber.replace('۵', '5');
+        //    }
+        //    if (phonenumber.match(/[۶]/g)) {
+        //        phonenumber = phonenumber.replace(/[۶]/g, '6');
+        //    }
+        //    if (phonenumber.match(/[۷]/g)) {
+        //        phonenumber = phonenumber.replace(/[۷]/g, '7');
+        //    }
+        //    if (phonenumber.match(/[۸]/g)) {
+        //        phonenumber = phonenumber.replace(/[۸]/g, '8');
+        //    }
+        //    if (phonenumber.match(/[۹]/g)) {
+        //        phonenumber = phonenumber.replace(/[۹]/g, '9');
+        //    }
+
+        //    if (phonenumber.match(/[^0123456789۰۱۲۳۴۵۶۷۸۹]/g)) {
+        //        phonenumber = phonenumber.replace(/[^0123456789۰۱۲۳۴۵۶۷۸۹]/g, '');
+        //    }
+
+        //    this.setState({
+        //        [e.target.name]: phonenumber
+        //    })
+        //    // this.setState({ phonenumber })
+        //};
+
+
+
+        var dataCount = 0;
+        var currentPage = 2;
+
+        //check pagination color when selected
+        var adverId = 0;
+        $(".changeAdverStatusForm").submit(function (e) {
+            $("#adminDescription").removeClass("error");
+
+            if ($("#adverCreateStatusInModal").val() == 2 || $("#adverCreateStatusInModal").val() == 4) {
+                if ($("#adminDescription").val() == "") {
+                    toastr.error("دلیل تایید نشدن آگهی را ذکر کنید");
+                    $("#adminDescription").addClass("error");
+
+                    return false;
+
+                }
+            }
+            var jsonData = {
+                "adminDescription": $("#adminDescription").val(),
+                "adverId": adverId,
+                "adverCreatationStatus": $("#adverCreateStatusInModal").val()
+            }
+            e.preventDefault();
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Post",
+                url: '/api/Adver/ChangeAdverCreateStatus',
+                contentType: 'application/json',
+                data: JSON.stringify(jsonData),
+                success: function (data) {
+
+                    if (data.statusCode == '200') {
+                        toastr.success(data.message);
+                        //$("#changeStatus").clo
+                        $("#changeStatus").modal('hide');
+
+                        $("#changeStatusClose").click();
+
+                        GetData('/api/Adver/GetAllAdverForAdmin?page=1&pageSize=10000000', {}, true);
+
+
+                    } else {
+
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (data) {
+
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+
+                    })
+                }
+            });
+        });
+        $("#sorting").submit(function (e) {
+            e.preventDefault();
+            GetData(getUrl(), {}, true);
+            getPageSize().then((data) => {
+                createPagination(data);
+                dataCount = data;
+                //pagination
+                $(".pagination li").removeClass("selectedLi");
+
+                $(".pagination li:nth-child(2)").addClass("selectedLi");
+                checkFirstOrLast();
+            });
+
+        });
+        function getUrl() {
+            var baseUrl = "/api/Adver/GetAllAdverByFilteringForAdmin?";
+            if ($("#isImmediately").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "isImmediatley=" + $("#isImmediately").val();
+                else
+                    baseUrl += "&isImmediatley=" + $("#isImmediately").val();
+
+            }
+            if ($("#adverStatus").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "adverStatus=" + $("#adverStatus").val();
+                else
+                    baseUrl += "&adverStatus=" + $("#adverStatus").val();
+
+
+            }
+            if ($("#adverCreateStatus").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "adverCreatationStatus=" + $("#adverCreateStatus").val();
+                else
+                    baseUrl += "&adverCreatationStatus=" + $("#adverCreateStatus").val();
+
+            }
+
+            if ($("#adverCities").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "adverCities=" + $("#adverCities").val();
+                else
+                    baseUrl += "&adverCities=" + $("#adverCities").val();
+
+            }
+
+            if (baseUrl.endsWith("?")) {
+                baseUrl += "page=1&pageSize=1010000000";
+            }
+
+            else {
+                baseUrl += "&page=1&pageSize=1010000000";
+            }
+            return baseUrl;
+        }
+        function getUrlForPageCount() {
+            var baseUrl = "/api/Adver/GetAllAdverByFilteringForAdminCount?";
+            if ($("#isImmediately").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "isImmediatley=" + $("#isImmediately").val();
+                else
+                    baseUrl += "&isImmediatley=" + $("#isImmediately").val();
+
+            }
+            if ($("#adverStatus").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "adverStatus=" + $("#adverStatus").val();
+                else
+                    baseUrl += "&adverStatus=" + $("#adverStatus").val();
+
+
+            }
+            if ($("#adverCreateStatus").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "adverCreatationStatus=" + $("#adverCreateStatus").val();
+                else
+                    baseUrl += "&adverCreatationStatus=" + $("#adverCreateStatus").val();
+
+            }
+
+            return baseUrl;
+        }
+        //seprator
+        function separate(Number) {
+            Number += '';
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            x = Number.split('.');
+            y = x[0];
+            z = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(y))
+                y = y.replace(rgx, '$1' + ',' + '$2');
+            return y + z;
+        }
+        function GetData(url, data, isAlreadyTable) {
+            if (isAlreadyTable == true) {
+                $('#myTable').DataTable().destroy();
+            }
+            var oTable = $('#myTable').DataTable({
+                responsive: true,
+                ordering: false,
+                processing: true,
+                paging: true,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json"
+                },
+                ajax: {
+                    beforeSend: setAuthHeader,
+                    url: url,
+                    dataSrc: "",
+                    type: "GET",
+                    dataType: "json",
+                    cache: true,
+                    delay: 1000,
+                    data: data,
+                    //, success: function (res) {
+                    //    alert()
+                    //    console.log(res);
+                    //}
+                },
+                columns: [
+                    {
+                        data: 'id'
+                    },
+                    {
+                        data: 'title'
+                    },
+                    {
+                        data: 'city'
+                    },
+                    {
+                        data: 'typeOfCooperation',
+                        render: function (data, type, item) {
+
+
+                            return '<div class="form-group">' + GetTypeOfCooperation(data) + '</div>'
+                        }
+                    },
+                    {
+                        data: 'salary',
+                        render: function (data, type, item) {
+
+
+                            return '<div class="form-group">' + GetSalary(data) + '</div>'
+                        }
+                    },
+
+                    {
+                        data: "workExperience",
+                        render: function (data, type, item) {
+                            return '<div class="form-group">' + GetWorkExperience(data) + '</div>'
+                        }
+                    },
+                    {
+                        data: "degreeOfEducation",
+                        render: function (data, type, item) {
+                            return '<div class="form-group">' + GetDegreeOfEducation(data) + '</div>'
+                        }
+                    },
+                    {
+                        data: "gender",
+                        render: function (data, type, item) {
+                            return '<div class="form-group">' + GetGender(data) + '</div>'
+                        }
+                    },
+                    {
+                        data: "military"
+                    },
+                    {
+                        data: "descriptionOfJob",
+                        render: function (data, type, item) {
+                            var realData = data.replaceAll('"', '');
+
+                            data = data.length > 9 ? data.substring(0, 9) : data;
+
+                            return `<div class="form-group"> <button onclick="showContent(this)"  value="${realData}" class="btn btn-primary" style="margin-bottom:17%;">نمایش</button></div>`
+                        }
+                    },
+                    {
+                        data: "feildOfActivity"
+                    },
+                    {
+                        data: "companyName"
+                    },
+                    //{
+                    //    data: "resomeColorId",
+                    //    render: function (data, type, item) {
+                    //        let el = ' <button  onclick="changeTemplate(' + item.id + ')" class="btn btn-warning btn-sm">مدیریت قالب</button>';
+                    //        return el;
+                    //    }
+                    //},
+                    {
+                        data: "id",
+                        render: function (data, type, item) {
+                            var desc = item.descriptionOfJob.replaceAll('"', '');
+                            //let el = ' <button class="editAdverDetail btn btn-info btn-sm" data-item-email="' + item.email + '" data-item-id=' + item.id + '" data-item-address=' + item.address + '" data-item-phoneNumber=' + item.phoneNumber + '" >ویرایش</button>';
+                            let el = ` <button class="editAdverDetail btn btn-info btn-sm" data-item-title="${item.title}" data-item-desc="${desc}" data-item-email="${item.email}" data-item-id="${item.id}" data-item-address="${item.address}" data-item-phoneNumber="${item.phoneNumber}" >ویرایش</button><hr/><a href="/admin/AssignedResomes?adverId=${item.id}" class="btn btn-warning btn-sm">رزومه های ارسالی</a><hr/><a class="btn btn-info btn-sm" href="https://katinojob.ir/Security/09111245094/936611/Employee?adverId=${item.id}">نمایش آگهی</a>`;
+
+                            return el;
+                        }
+                    },
+
+                    {
+                        data: "isImmediate",
+                        render: function (data, type, item) {
+                            let html = "";
+                            if (data == "فوری") {
+                                html = '<div class="form-group"><label  class="btn btn-danger">' + data + '</label></div> '
+                            }
+
+                            else {
+                                html = '<div class="form-group"><label  class="btn btn-warning">' + data + '</label></div> '
+
+                            }
+                            if (item.isStorySaz) {
+                                html += ' <div class="form-group"><label  class="btn btn-info">استوری</label></div>';
+                            }
+
+                            return html;
+                        }
+                    },
+
+                    {
+                        data: "id",
+                        render: function (data, type, item) {
+                            let el = `<a id=${item.id + "-btn"} download class="form-group btn btn-success d-block" data-id=${item.id} onclick="downlaodAdver(this) ">دانلود تصویر آگهی</a>`;
+                            return el;
+                        }
+                    },
+                    {
+                        data: "id",
+                        render: function (data, type, item) {
+                            let el = ' <a href="/Admin/ReportAdverts?id=' + item.id + '" class="btn btn-primary">گزارش آگهی</a>';
+                            return el;
+                        }
+                    },
+
+                    {
+                        data: 'adverStatus',
+                        render: function (data, type, item) {
+
+
+                            switch (data) {
+                                case 1:
+                                    return '<div class="form-group"><label  class=" btn btn-success">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 2:
+                                    return '<div class="form-group"><label  class="btn btn-primary">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 3:
+                                    return '<div class="form-group"><label  class="btn btn-warning">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 4:
+                                    return '<div class="form-group"><label  class="btn btn-light">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 5:
+                                    return '<div class="form-group"><label  class="btn btn-danger">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 6:
+                                    return '<div class="form-group"><label  class="btn btn-dark">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+
+                                default:
+                                    return '<div class="form-group"><label  class="btn btn-warning">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                            }
+                        }
+                    },
+                    //},
+                    {
+                        data: 'adverCreatationStatus',
+                        render: function (data, type, item) {
+                            //                            return `
+                            //                            <div class="form-group">
+                            //<span class="d-block text-center"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
+                            //<span class="d-block text-center mt-2"><span class="badge badge-pill badge-success">Success</span></span>
+                            //                            </div>
+                            //                            `;
+                            //return '<div class="form-group"><label data-status="' + data + '"  data-id="' + item.id + '" class=" btn btn-light"  onclick="changeCreateStatus(this)">' + GetAdverCreatationStatus(data) + '<button class="fa fa-edit" aria-hidden="true"></button></label></div>';
+                            let colorClass = '';
+                            switch (data) {
+                                case 1:
+                                    colorClass = "badge-light";
+                                    break;
+                                case 2:
+                                    colorClass = "badge-danger";
+                                    break;
+                                case 3:
+                                    colorClass = "badge-success";
+                                    break;
+                                case 4:
+                                    colorClass = "badge-dark";
+                                    break;
+
+                                default:
+                                    colorClass = "badge-warning";
+                                    break;
+                            }
+
+                            return `<div class="form-group">
+                                                                                                                <span class="d-block text-center" data-status='${data}' onclick="changeCreateStatus(this)" data-id='${item.id}'><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
+                                                                                                                <span class="d-block text-center mt-2"><span class="badge badge-pill ${colorClass}">${GetAdverCreatationStatus(data)}</span></span> </div>`;
+
+                        }
+                    }
+                ],
+            });
+        };
+
+
+        function downlaodAdver(e) {
+            event = window.event
+
+            console.log(e)
+            const id = $(e).attr("data-id");
+            //$("Gallery").modal('toggle');
+            var formData = new FormData();
+            formData.append("id", id);
+            $.ajax({
+                type: "POST",
+                url: "/api/Adver/DownlaodAdverImage",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data)
+                    //alert(data.resul)
+                    //event.preventDefault();
+                    //window.location.href = data.resul;
+
+                    window.open(
+                        data.resul,
+                        '_blank' // <- This is what makes it open in a new window.
+                    );
+                    console.log(data)
+
+                }
+            });
+        }
+
+
+
+        $(document).ready(async function () {
+
+
+            //loadData
+            GetData('/api/Adver/GetAllAdverForAdmin?page=1&pageSize=10000000', {}, false);
+
+            //create pagination
+
+            //getPageSize().then((data) => {
+            //    console.log('from call', data);
+            //    createPagination(data);
+
+            //    dataCount = data;
+            //    //pagination
+            //    $(".pagination li").removeClass("selectedLi");
+
+            //    $(".pagination li:nth-child(2)").addClass("selectedLi");
+            //    checkFirstOrLast();
+            //});
+            setTimeout(function () {
+                $('input[type="search"]').on('keyup keypress keydown change', function () {
+                    if (this.value.match(/[۰]/g)) {
+                        this.value = this.value.replace(/[۰]/g, '0');
+                    }
+                    if (this.value.match(/[۱]/g)) {
+                        this.value = this.value.replace(/[۱]/g, '1');
+                    }
+                    if (this.value.match(/[۲]/g)) {
+                        this.value = this.value.replace(/[۲]/g, '2');
+                    }
+                    if (this.value.match(/[۳]/g)) {
+                        this.value = this.value.replace(/[۳]/g, '3');
+                    }
+                    if (this.value.match(/[۴]/g)) {
+                        this.value = this.value.replace(/[۴]/g, '4');
+                    }
+                    if (this.value.match(/[۵]/g)) {
+                        this.value = this.value.replace(/[۵]/g, '5');
+                    }
+                    if (this.value.match(/[۶]/g)) {
+                        this.value = this.value.replace(/[۶]/g, '6');
+                    }
+                    if (this.value.match(/[۷]/g)) {
+                        this.value = this.value.replace(/[۷]/g, '7');
+                    }
+                    if (this.value.match(/[۸]/g)) {
+                        this.value = this.value.replace(/[۸]/g, '8');
+                    }
+                    if (this.value.match(/[۹]/g)) {
+                        this.value = this.value.replace(/[۹]/g, '9');
+                    }
+
+                    //if (this.value.match(/[^0123456789۰۱۲۳۴۵۶۷۸۹]/g)) {
+                    //    this.value = this.value.replace(/[^0123456789۰۱۲۳۴۵۶۷۸۹]/g, '');
+                    //}
+                });
+            }, 2000)
+
+        });
+
+        function showContent(e) {
+            $("#modalParagraph").html($(e).val());
+            $("#rejectResultBtn").click();
+        }
+        function changeCreateStatus(e) {
+            var statusId = $(e).attr("data-status");
+            $("#adverCreateStatusInModal").val(statusId);
+            adverId = $(e).attr("data-id");
+            $("#changeStatusBtn").click();
+        }
+        function changeTemplate(id) {
+            loading();
+            let model = {
+                id
+            };
+            $.ajax({
+                url: '/api/adver/GetTemplate',
+                method: 'POST',
+                data: model,
+                success: function (data) {
+                    $('#oldTemplate').css('background-color', data.template.background);
+                    $('#oldTemplate').css('color', data.template.text);
+                    $('#templates').empty();
+                    for (var i = 0; i < data.templates.length; i++) {
+                        let item = data.templates[i];
+                        if (data.template.id == item.id) {
+
+                            $('#templates').append('<option selected value="' + item.id + '" style="background-color:' + item.background + ';color:' + item.text + '">' + item.background + "--" + item.text + '</option>');
+                        } else {
+                            $('#templates').append('<option value="' + item.id + '" style="background-color:' + item.background + ';color:' + item.text + '">' + item.background + "--" + item.text + '</option>');
+                        }
+                        $('#advertId').val(model.id);
+                    }
+                    $('#adverTemplateModal').modal();
+                    Swal.close();
+                }
+            });
+
+        }
+        function submitChangeTemplate() {
+            let templateId = $('#templates').val();
+            loading();
+            let model = {
+                templateId,
+                id: $('#advertId').val()
+            };
+            $.ajax({
+                url: '/api/adver/ChangeTemplate',
+                method: 'POST',
+                data: model,
+                success: function (data) {
+                    toastr.success(data.message);
+                    Swal.close();
+                }
+            })
+        }
+
+        $('#myTable').on('click', '.editAdverDetail', function () {
+            loading();
+            let btn = $(this);
+            let address = btn.attr('data-item-address');
+            let phoneNumber = btn.attr('data-item-phoneNumber');
+            let email = btn.attr('data-item-email');
+            let title = btn.attr('data-item-title');
+            let id = btn.attr('data-item-id');
+            let desc = btn.attr('data-item-desc');
+            id = id.replace(/[^\d.-]/g, '');
+            console.log(desc);
+            CKEDITOR.instances.adverDesc.setData(desc);
+            $('#adverId').val(id);
+            $('#adverEmail').val(email);
+            $('#adverTitle').val(title);
+            $('#adverPhoneNumber').val(phoneNumber.replace('"', ''));
+            $('#adverAddress').val(address.replace('"', ''));
+            $('#AdverDetailModal').modal();
+            Swal.close();
+        })
+
+        //$('#adverDetailForm').submit(function (e) {
+        //    e.preventDefault();
+        //    let form = $(this);
+        //    var jsonData = {
+        //        "email": $("#adverEmail").val(),
+        //        "adverId": adverId,
+        //        "phoneNumber": $("#adverPhoneNumber").val(),
+        //        "address": $("#adverAddress").val()
+        //    }
+        //    $.ajax({
+        //        beforeSend: setAuthHeader,
+        //        method: "Post",
+        //        url: '/api/Adver/ChangeDetailsByAdmin',
+        //        contentType: 'application/json',
+        //        data: JSON.stringify(jsonData),
+        //        success: function (data) {
+
+        //            if (data.statusCode == '200') {
+        //                toastr.success(data.message);
+        //                $('#AdverDetailModal').modal('toggle');
+        //            } else {
+
+        //                toastr.error(data.message);
+        //            }
+        //        },
+        //        error: function (data) {
+
+        //            if (data.responseJSON == undefined) {
+        //                toastr.error("مشکلی رخ داده است");
+        //                return;
+
+        //            }
+        //            var errors = data.responseJSON.message;
+        //            errors.forEach(elem => {
+        //                if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+        //                if (elem == "Forbidden") { elem = "عدم دسترسی " }
+        //                toastr.error(elem);
+
+
+        //            })
+        //        }
+        //    });
+        //});
+
+        function adverDetailFormSubmit() {
+            var formData = new FormData();
+            formData.append("email", $("#adverEmail").val());
+            formData.append("title", $("#adverTitle").val());
+            formData.append("phoneNumber", $("#adverPhoneNumber").val());
+            formData.append("adverId", $("#adverId").val());
+            formData.append("address", $("#adverAddress").val());
+            let desc = CKEDITOR.instances.adverDesc.getData();
+            console.log(desc);
+            formData.append("desc", desc);
+
+            //var jsonData = {
+            //    "email": $("#adverEmail").val(),
+            //    "adverId": $('#adverId').val(),
+            //    "phoneNumber": $("#adverPhoneNumber").val(),
+            //    "address": $("#adverAddress").val()
+            //}
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Post",
+                url: '/api/Adver/ChangeDetailsByAdmin',
+                //contentType: 'application/json',
+                //data: JSON.stringify(jsonData),
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+
+                    if (data.statusCode == '200') {
+                        toastr.success(data.message);
+                        $('#AdverDetailModal').modal('toggle');
+                    } else {
+
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (data) {
+
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+
+                    })
+                }
+            });
+        }
+                                                //function getPageSize() {
+                                                //    return $.ajax({
+                                                //        beforeSend: setAuthHeader,
+                                                //        method: "Get",
+                                                //        url: getUrlForPageCount(),
+                                                //        contentType: 'application/json',
+                                                //        data: {},
+
+                                                //        success: function (data) {
+                                                //        },
+                                                //        error: function (data) {
+                                                //            if (data.responseJSON == undefined) {
+                                                //                toastr.error("مشکلی رخ داده است");
+
+                                                //            }
+                                                //            var errors = data.responseJSON.message;
+                                                //            errors.forEach(elem => {
+                                                //                if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                                                //                if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                                                //                toastr.error(elem);
+
+
+                                                //            })
+                                                //        }
+                                                //    });   
+                                                //}
+
+                                                //function createPagination(pageCount) {
+
+                                                //    var pageBoxUI = $(".pagination");
+                                                //    pageBoxUI.html("");
+                                                //    var number = ``;
+                                                //    if (pageCount > 1) {
+                                                //        for (var i = 1; i <= pageCount; i++) {
+                                                //            number += `<li class="paginate_button page-item active " onclick="changePage(this)">${i}</li>`;
+
+                                                //        }
+                                                //        var children = `
+                                                //             <li class="paginate_button page-item previous  " onclick="previous()" id="myTable_previous">&laquo;</li>
+
+                                                //${number}
+
+
+                                                //                 <li class="paginate_button page-item next " id="myTable_next" onclick="next()">&raquo;</li>`;
+                                                //        pageBoxUI.append(children);
+                                                //    }
+
+
+                                                ////}
+
+    </script>
+}

@@ -1,0 +1,671 @@
+﻿
+@{
+    ViewData["Title"] = "مدیریت آگهی ها";
+    Layout = "~/Views/Shared/_Refrence.cshtml";
+}
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    <link rel="~/stylesheet" href="vendors/dataTable/dataTables.min.css" type="text/css">
+    <style>
+        .pagination > li {
+            margin-left: 1%;
+            cursor: pointer;
+        }
+
+        .selectedLi {
+            color: red;
+        }
+
+        label {
+            padding-top: 10px;
+            vertical-align: top;
+        }
+
+        #filtering {
+            vertical-align: text-bottom;
+        }
+
+        #changeAdverStatusBtn {
+            border: 1px solid black;
+            background: #ddd;
+        }
+
+        .error {
+            animation-name: example;
+            animation-duration: 1.6s;
+        }
+
+        @@keyframes example {
+            0% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            10% {
+                border-color: white;
+                width: 100%;
+                height: 99%;
+            }
+
+            20% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            30% {
+                border-color: white;
+                width: 100%;
+                height: 99%;
+            }
+
+            40% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            50% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            60% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+
+            70% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            80% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+
+            90% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            100% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+        }
+    </style>
+
+
+}
+<form id="sorting">
+
+    <div class="form-group " style="margin-top:3%">
+        <label for="exampleInputEmail1">نوع  آگهی</label>
+        <select class="custom-select mb-3 col-2" id="isImmediately">
+            <option selected> </option>
+            <option value="false">معمولی</option>
+            <option value="true">فوری</option>
+        </select>
+        <label for="exampleInputPassword1">وضعیت آگهی</label>
+        <select class="custom-select mb-3 col-2" id="adverStatus">
+            <option selected></option>
+            <option value="1">فعال</option>
+            <option value="2">پیش نویس </option>
+            <option value="3">آرشیو</option>
+            <option value="4">پایان یافته</option>
+            <option value="5">غیرفعال</option>
+            <option value="6">منقضی شده</option>
+        </select>
+        <label for="exampleInputPassword1">وضعیت تایید ادمین</label>
+        <select class="custom-select mb-3 col-2" id="adverCreateStatus">
+            <option selected></option>
+            <option value="1">در حال بررسی</option>
+            <option value="2">رد شده</option>
+            <option value="3">پذیرفته شده</option>
+            <option value="4">برگشت خورده</option>
+        </select>
+        <button id="filtering" type="submit" class="btn btn-primary col-2">مرتب سازی</button>
+
+    </div>
+
+</form>
+
+<button type="button" id="rejectResultBtn" class="btn btn-primary mr-2 mb-2 d-none" data-toggle="modal" data-target="#rejectResult">
+</button>
+<button type="button" id="changeStatusBtn" class="d-none" data-toggle="modal" data-target="#changeStatus">
+</button>
+
+<hr />
+<table id="myTable" class="table table-striped table-bordered table-responsive">
+    <thead>
+        <tr>
+
+            <th>#</th>
+            <th>عنوان</th>
+            <th>شهر</th>
+            <th>نوع همکاری</th>
+            <th>حقوق</th>
+            <th>سابقه کار</th>
+            <th>مدرک تحصیلی</th>
+            <th> جنسیت</th>
+            <th>خدمت سربازی</th>
+            <th>توضیح مختصر</th>
+            <th>دسته بندی شغلی</th>
+            <th>نام شرکت</th>
+            <th> نوع آگهی</th>
+            <th>  وضعیت آگهی</th>
+            <th>  تایید ایجاد آگهی </th>
+        </tr>
+    </thead>
+    <tbody id="rewsOfTable">
+    </tbody>
+</table>
+
+<ul class="pagination" style=" direction: ltr; ">
+</ul>
+
+
+
+<!--CreateModal-->
+<div class="modal fade" tabindex="-1" role="dialog" id="rejectResult">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">نمایش کامل توضیحات</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="modalParagraph">
+
+
+                </p>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-danger w-25 mx-auto" style="display:block;text-align:center; margin-left:35%" data-dismiss="modal">بستن</button>
+                @*<button type="button" class="btn btn-primary">اعمال تغییرات</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="changeStatus">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">تایید آگهی</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="changeStatusClose">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="changeAdverStatusForm">
+
+                    <div class="form-group ">
+                        <label for="adverCreateStatusInModal">وضعیت آگهی:</label>
+
+                        <select class="custom-select mb-3" id="adverCreateStatusInModal">
+                            <option value="1">در حال بررسی</option>
+                            <option value="2">رد شده</option>
+                            <option value="3">پذیرفته شده</option>
+                            <option value="4">برگشت خورده</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adminDescription">توضیحات ادمین:</label>
+                        <textarea class="form-control" id="adminDescription"
+                                  placeholder="لطفا توضیحات لازم را وارد کنید..."></textarea>
+                    </div>
+
+                    <button type="submit" id="changeAdverStatusBtn" class="btn btn-block">ثبت</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/vendors/dataTable/jquery.dataTables.min.js"></script>
+
+    <!-- Bootstrap 4 and responsive compatibility -->
+    <script src="~/vendors/dataTable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendors/dataTable/dataTables.responsive.min.js"></script>
+    <script>
+        var dataCount = 0;
+        var currentPage = 2;
+
+        //check pagination color when selected
+        var adverId = 0;
+        $(".changeAdverStatusForm").submit(function (e) {
+            $("#adminDescription").removeClass("error");
+
+            if ($("#adverCreateStatusInModal").val() == 2 || $("#adverCreateStatusInModal").val() == 4) {
+                if ($("#adminDescription").val() == "") {
+                    toastr.error("دلیل تایید نشدن آگهی را ذکر کنید");
+                    $("#adminDescription").addClass("error");
+
+                    return false;
+
+                }
+            }
+            var jsonData = {
+                "adminDescription": $("#adminDescription").val(),
+                "adverId": adverId,
+                "adverCreatationStatus": $("#adverCreateStatusInModal").val()
+            }
+            e.preventDefault();
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Post",
+                url: '/api/Adver/ChangeAdverCreateStatus',
+                contentType: 'application/json',
+                data: JSON.stringify(jsonData),
+                success: function (data) {
+
+                    if (data.statusCode == '200') {
+                        toastr.success(data.message);
+                        //$("#changeStatus").clo
+                        $("#changeStatus").modal('hide');
+
+                        $("#changeStatusClose").click();
+
+                        GetData('/api/Adver/GetAllAdverForAdmin?page=1&pageSize=10000000', {}, true);
+
+
+                    } else {
+
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (data) {
+
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+
+                    })
+                }
+            });
+        });
+        $("#sorting").submit(function (e) {
+            e.preventDefault();
+            GetData(getUrl(), {}, true);
+            getPageSize().then((data) => {
+                createPagination(data);
+                dataCount = data;
+                //pagination
+                $(".pagination li").removeClass("selectedLi");
+
+                $(".pagination li:nth-child(2)").addClass("selectedLi");
+                checkFirstOrLast();
+            });
+
+        });
+        function getUrl() {
+            var baseUrl = "/api/Adver/GetAllAdverByFilteringForAdmin?";
+            if ($("#isImmediately").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "isImmediatley=" + $("#isImmediately").val();
+                else
+                    baseUrl += "&isImmediatley=" + $("#isImmediately").val();
+
+            }
+            if ($("#adverStatus").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "adverStatus=" + $("#adverStatus").val();
+                else
+                    baseUrl += "&adverStatus=" + $("#adverStatus").val();
+
+
+            }
+            if ($("#adverCreateStatus").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "adverCreatationStatus=" + $("#adverCreateStatus").val();
+                else
+                    baseUrl += "&adverCreatationStatus=" + $("#adverCreateStatus").val();
+
+            }
+            if (baseUrl.endsWith("?")) {
+                baseUrl += "page=1&pageSize=1010000000";
+            }
+
+            else {
+                baseUrl += "&page=1&pageSize=1010000000";
+            }
+            return baseUrl;
+        }
+        function getUrlForPageCount() {
+            var baseUrl = "/api/Adver/GetAllAdverByFilteringForAdminCount?";
+            if ($("#isImmediately").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "isImmediatley=" + $("#isImmediately").val();
+                else
+                    baseUrl += "&isImmediatley=" + $("#isImmediately").val();
+
+            }
+            if ($("#adverStatus").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "adverStatus=" + $("#adverStatus").val();
+                else
+                    baseUrl += "&adverStatus=" + $("#adverStatus").val();
+
+
+            }
+            if ($("#adverCreateStatus").val() != "") {
+                if (baseUrl.endsWith("?"))
+                    baseUrl += "adverCreatationStatus=" + $("#adverCreateStatus").val();
+                else
+                    baseUrl += "&adverCreatationStatus=" + $("#adverCreateStatus").val();
+
+            }
+          
+            return baseUrl;
+        }
+        //seprator
+        function separate(Number) {
+            Number += '';
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            x = Number.split('.');
+            y = x[0];
+            z = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(y))
+                y = y.replace(rgx, '$1' + ',' + '$2');
+            return y + z;
+        }
+        function GetData(url, data, isAlreadyTable) {
+            if (isAlreadyTable == true) {
+                $('#myTable').DataTable().destroy();
+            }
+            var oTable = $('#myTable').DataTable({
+                ordering: false,
+                processing: true,
+                paging: true,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json"
+                },
+                ajax: {
+                    beforeSend: setAuthHeader,
+                    url: url,
+                    dataSrc: "",
+                    type: "GET",
+                    dataType: "json",
+                    cache:true,
+                    delay: 1000,
+                    data: data,
+                    //, success: function (res) {
+                    //    alert()
+                    //    console.log(res);
+                    //}
+                },
+                columns: [
+                    {
+                        data: 'id'
+                    }, {
+                        data: 'title'
+                    },
+                    {
+                        data: 'city'
+                    },
+                    {
+                        data: 'typeOfCooperation',
+                        render: function (data, type, item) {
+
+
+                            return '<div class="form-group">' + GetTypeOfCooperation(data) + '</div>'
+                        }
+                    },
+                    {
+                        data: 'salary',
+                        render: function (data, type, item) {
+
+
+                            return '<div class="form-group">' + GetSalary(data) + '</div>'
+                        }
+                    },
+
+                    {
+                        data: "workExperience",
+                        render: function (data, type, item) {
+
+
+                            return '<div class="form-group">' + GetWorkExperience(data) + '</div>'
+                        }
+                    },
+                    {
+
+                        data: "degreeOfEducation",
+                        render: function (data, type, item) {
+
+
+                            return '<div class="form-group">' + GetDegreeOfEducation(data) + '</div>'
+                        }
+                    },
+                    {
+
+                        data: "gender",
+                        render: function (data, type, item) {
+
+
+                            return '<div class="form-group">' + GetGender(data) + '</div>'
+                        }
+                    },
+                    {
+                        data: "military"
+                    },
+                    {
+                        data: "descriptionOfJob",
+                        render: function (data, type, item) {
+                            var realData = data;
+
+                            data = data.length > 9 ? data.substring(0, 9) : data;
+
+                            return `<div class="form-group"> <button onclick="showContent(this)"  value="${realData}" class="btn btn-primary" style="margin-bottom:17%;">نمایش</button>${data} </div>`
+                        }
+                    },
+                    {
+                        data: "feildOfActivity"
+                    },
+                    {
+                        data: "companyName"
+                    },
+
+                    {
+                        data: "isImmediate",
+                        render: function (data, type, item) {
+                            if (data == "فوری") {
+                                return '<div class="form-group"><label  class="btn btn-danger">' + data + '</label></div>'
+                            }
+
+                            else {
+                                return '<div class="form-group"><label  class="btn btn-warning">' + data + '</label></div>'
+
+                            }
+                        }
+                    },
+                    {
+                        data: 'adverStatus',
+                        render: function (data, type, item) {
+
+
+                            switch (data) {
+                                case 1:
+                                    return '<div class="form-group"><label  class=" btn btn-success">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 2:
+                                    return '<div class="form-group"><label  class="btn btn-primary">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 3:
+                                    return '<div class="form-group"><label  class="btn btn-warning">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 4:
+                                    return '<div class="form-group"><label  class="btn btn-light">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 5:
+                                    return '<div class="form-group"><label  class="btn btn-danger">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                                case 6:
+                                    return '<div class="form-group"><label  class="btn btn-dark">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+
+                                default:
+                                    return '<div class="form-group"><label  class="btn btn-warning">' + GetAdverStatus(data) + '</label></div>';
+                                    break;
+                            }
+                        }
+                    },
+                    //},
+                    {
+                        data: 'adverCreatationStatus',
+                        render: function (data, type, item) {
+                            //                            return `
+                            //                            <div class="form-group">
+                            //<span class="d-block text-center"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
+                            //<span class="d-block text-center mt-2"><span class="badge badge-pill badge-success">Success</span></span>
+                            //                            </div>
+                            //                            `;
+                            //return '<div class="form-group"><label data-status="' + data + '"  data-id="' + item.id + '" class=" btn btn-light"  onclick="changeCreateStatus(this)">' + GetAdverCreatationStatus(data) + '<button class="fa fa-edit" aria-hidden="true"></button></label></div>';
+                            let colorClass = '';
+                            switch (data) {
+                                case 1:
+                                    colorClass = "badge-light";
+                                    break;
+                                case 2:
+                                    colorClass = "badge-danger";
+                                    break;
+                                case 3:
+                                    colorClass = "badge-success";
+                                    break;
+                                case 4:
+                                    colorClass = "badge-dark";
+                                    break;
+
+                                default:
+                                    colorClass = "badge-warning";
+                                    break;
+                            }
+
+                            return `<div class="form-group">
+<span class="d-block text-center" data-status='${data}' onclick="changeCreateStatus(this)" data-id='${item.id}'><i class="fa fa-pencil-square-o" aria-hidden="true"></i></span>
+<span class="d-block text-center mt-2"><span class="badge badge-pill ${colorClass}">${GetAdverCreatationStatus(data)}</span></span>
+                                    </div>`;
+
+                        }
+                    }
+                ],
+            });
+        };
+
+
+
+        $(document).ready(async function () {
+            
+
+            //loadData
+            GetData('/api/Adver/GetAllAdverForAdmin?page=1&pageSize=10000000', {}, false);
+
+            //create pagination
+
+            //getPageSize().then((data) => {
+            //    console.log('from call', data);
+            //    createPagination(data);
+
+            //    dataCount = data;
+            //    //pagination
+            //    $(".pagination li").removeClass("selectedLi");
+
+            //    $(".pagination li:nth-child(2)").addClass("selectedLi");
+            //    checkFirstOrLast();
+            //});
+
+
+        });
+
+        function showContent(e) {
+            $("#modalParagraph").html($(e).val());
+            $('#rejectResult').modal('show');
+            @*$("#rejectResultBtn").click();*@
+        }
+        function changeCreateStatus(e) {
+            var statusId = $(e).attr("data-status");
+            $("#adverCreateStatusInModal").val(statusId);
+            adverId = $(e).attr("data-id");
+            $('#changeStatus').modal('show');
+            @*$("#changeStatusBtn").click();*@
+        }
+
+        //function getPageSize() {
+        //    return $.ajax({
+        //        beforeSend: setAuthHeader,
+        //        method: "Get",
+        //        url: getUrlForPageCount(),
+        //        contentType: 'application/json',
+        //        data: {},
+
+        //        success: function (data) {
+        //        },
+        //        error: function (data) {
+        //            if (data.responseJSON == undefined) {
+        //                toastr.error("مشکلی رخ داده است");
+
+        //            }
+        //            var errors = data.responseJSON.message;
+        //            errors.forEach(elem => {
+        //                if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+        //                if (elem == "Forbidden") { elem = "عدم دسترسی " }
+        //                toastr.error(elem);
+
+
+        //            })
+        //        }
+        //    });
+        //}
+
+        //function createPagination(pageCount) {
+
+        //    var pageBoxUI = $(".pagination");
+        //    pageBoxUI.html("");
+        //    var number = ``;
+        //    if (pageCount > 1) {
+        //        for (var i = 1; i <= pageCount; i++) {
+        //            number += `<li class="paginate_button page-item active " onclick="changePage(this)">${i}</li>`;
+
+        //        }
+        //        var children = `
+        //             <li class="paginate_button page-item previous  " onclick="previous()" id="myTable_previous">&laquo;</li>
+
+        //${number}
+
+
+        //                 <li class="paginate_button page-item next " id="myTable_next" onclick="next()">&raquo;</li>`;
+        //        pageBoxUI.append(children);
+        //    }
+           
+          
+        ////}
+    </script>
+}

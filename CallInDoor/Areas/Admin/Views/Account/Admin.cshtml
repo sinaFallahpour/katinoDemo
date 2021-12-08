@@ -1,0 +1,647 @@
+﻿@{
+    ViewData["Title"] = "مدیریت ادمین ها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    @*<link rel="~/stylesheet" href="vendors/dataTable/dataTables.min.css" type="text/css">*@
+    <link rel="~/stylesheet" href="~/vendors/dataTable/dataTables.min.css" type="text/css">
+    <link rel="stylesheet" href="/vendors/select2/css/select2.min.css" type="text/css">
+
+    <style>
+        #logo {
+            margin: auto;
+            max-width: 200px;
+            max-height: 200px;
+            border: 2px solid #f3f3f3
+        }
+
+        .checked {
+            color: orange;
+        }
+
+        #myTable {
+            width: 102% !important;
+        }
+
+        #label {
+            margin: 28% 28%;
+        }
+
+        #selectAll {
+            margin: 33% 13%;
+        }
+
+        .pagination > li {
+            margin-left: 1%;
+            cursor: pointer;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        div.form-control {
+            text-align: center;
+            background: #f1f1f1;
+            overflow: hidden;
+        }
+
+        .table td {
+            text-align: center;
+        }
+
+        .table-bordered thead td, .table-bordered thead th {
+            border-bottom-width: 2px;
+            text-align: center;
+        }
+
+        .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+
+            .table > tbody > tr > td > img {
+                max-height: 100px;
+                max-width: 100px;
+            }
+
+        .selectedLi {
+            color: red;
+        }
+
+        label {
+            padding-top: 10px;
+            vertical-align: top;
+        }
+
+        #filtering {
+            vertical-align: text-bottom;
+        }
+
+        #ShowDetailsBtn {
+            border: 1px solid black;
+            background: #ddd;
+        }
+
+        #CreateTicketModalBtn {
+            border: 1px solid black;
+            background: #ddd;
+        }
+
+        .error {
+            animation-name: example;
+            animation-duration: 1.6s;
+        }
+
+        @@keyframes example {
+            0% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            10% {
+                border-color: white;
+                width: 100%;
+                height: 99%;
+            }
+
+            20% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            30% {
+                border-color: white;
+                width: 100%;
+                height: 99%;
+            }
+
+            40% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            50% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            60% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+
+            70% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            80% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+
+            90% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            100% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+        }
+    </style>
+
+
+}
+
+<button type="button" id="rejectResultBtn" class="btn btn-primary mr-2 mb-2 d-none" data-toggle="modal" data-target="#rejectResult">
+</button>
+<button type="button" id="ShowDetailsBtn" class="d-none" data-toggle="modal" data-target="#ShowDetails"></button>
+<button type="button" id="CreateAgentBtn" class="btn btn-success" data-toggle="modal" data-target="#CreateAgent" onclick="openCreateModal()">افزون ادمین</button>
+
+
+
+@*<button type="button" class="btn btn-light" id="CreateTicketModalBtn" onclick="sendTicket()" data-toggle="modal" data-target="#CreateTicket">
+            ارسال پیام جدید
+    </button>*@
+
+<hr />
+<table id="myTable" class="table table-striped table-bordered table-responsive">
+    <thead>
+        <tr>
+
+            <th>نام کاربری</th>
+            <th>نام ونام خانوادگی</th>
+            <th>شماره موبایل</th>
+            @*<th>فعال</th>*@
+            <th>عملیات</th>
+        </tr>
+    </thead>
+    <tbody id="rewsOfTable">
+    </tbody>
+</table>
+
+<ul class="pagination" style=" direction: ltr; ">
+</ul>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="CreateAgent">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ایجاد نماینده</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="CreateGifCodeClose">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="CreateAgentForm">
+                    <input type="hidden" name="id" id="id" />
+
+                    <div class="form-row">
+
+                        <div class="form-group col-md-12 ">
+                            <label for="userName">نام کاربری </label>
+                            <input type="text" name="userName"  class="form-control" id="userName" placeholder="" />
+                        </div>
+
+                        <div class="form-group col-md-12 ">
+                            <label for="fullname"> نام و نام خانوادگی   </label>
+                            <input type="text" name="fullname" class="form-control " id="fullname" placeholder="" />
+                        </div>
+
+                        <div class="form-group col-md-12 ">
+                            <label for="isActive">       فعال بودن    </label>
+                            <input type="checkbox" name="isActive" onclick="changeCheckBox('#isActive')" class="form-control " id="isActive" value="true" placeholder=" " />
+                        </div>
+                    </div>
+
+                    <button type="submit" id="SubmitCreateAgentBTN" class="btn btn-light-primary btn-block">ثبت</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="~/vendors/dataTable/jquery.dataTables.min.js"></script>
+
+    <!-- Bootstrap 4 and responsive compatibility -->
+    <script src="~/vendors/dataTable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendors/dataTable/dataTables.responsive.min.js"></script>
+    <script src="/vendors/select2/js/select2.min.js"></script>
+
+
+    <script>
+
+        let baseUrl = "/api/Account";
+        let formUrl = "";
+
+
+        //on chnage event on check box
+        function changeCheckBox(element) {
+
+
+            if (!$(element).prop('checked') == true) {
+                $(element).removeAttr('checked');
+                $(element).val(false);
+            }
+            else {
+                $(element).attr('checked', 'checked');
+                $(element).val(true);
+            }
+        }
+
+        ///set value to checob in in edit item call
+        function setCheckBoxValue(value, element) {
+            if (value == "true") {
+                $(element).val(true)
+                $(element).attr('checked', 'checked')
+            } else {
+                $(element).val(false)
+                $(element).removeAttr('checked')
+            }
+        }
+
+        //is check box check or not
+        function getChecBoxValue(element) {
+            return $(element).prop('checked')
+        }
+
+
+        function sendTicket() {
+            $(".modal-backdrop").removeClass("d-none");
+        }
+        //seprator
+
+        function GetData(url, data, isAlreadyTable) {
+            if (isAlreadyTable == true) {
+                $('#myTable').DataTable().destroy();
+            }
+            var oTable = $('#myTable').DataTable({
+                responsive: true,
+                ordering: false,
+                processing: true,
+                paging: true,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json"
+                },
+                ajax: {
+                    beforeSend: setAuthHeader,
+                    url: url,
+                    dataSrc: "",
+                    type: "GET",
+                    dataType: "json",
+                    cache: true,
+                    delay: 1000,
+                    data: data,
+                },
+                columns: [
+
+                    {
+                        data: 'userName',
+                        render: function (data, type, item) {
+                            return '<div class="form-group btn">' + data + '</div>'
+                        }
+                    }
+                    ,
+                    {
+                        data: 'fullname',
+                        render: function (data, type, item) {
+                            return '<div class="" style=" font-size: 103%;font-weight: bold;" > ' + data + '</div>'
+                        }
+                    },
+                    {
+                        data: 'userName',
+                        render: function (data, type, item) {
+                            return '<div class="" style=" font-size: 103%;font-weight: bold;" > ' + data + '</div>'
+                        }
+                    },
+
+                    //{
+                    //    data: 'isActive',
+                    //    render: function (data, type, item) {
+                    //        console.log(item.isActive)
+                    //        var isChecked = item.isActive == true ? 'checked' : "";
+                    //        var isActive = item.isActive == true ? false : true;
+                    //        return `<label class="switch">
+                    //                                                    <input type="checkbox" data-id=${item.id} onclick="BlockUnblock(this)" ${isChecked}>
+                    //                                                    <span class="slider round"></span>
+                    //                                                </label>`;
+                    //    }
+                    //}
+                    //,
+
+                    {
+
+                        data: "id",
+                        render: function (data, type, item) {
+                            let el = `
+                                                        <button class="form-group btn btn-primary d-block"  '
+                                                            data-id="${item.id}"
+                                                            data-userName="${item.userName}"
+                                                            data-fullname="${item.fullname}"
+                                                            data-isActive="${item.isActive}"
+                                                            onclick="EditItem(this)">ویرایش
+                                                        </button>
+
+                                                    <button class="form-group btn btn-danger d-block deleteAdmin"  '
+                                                            data-item-id="${item.id}">حذف
+                                                        </button>
+
+`;
+                            return el;
+
+                        }
+                    }
+                ],
+            });
+        };
+
+
+        $('#myTable').on('click', '.deleteAdmin', function () {
+            let btn = $(this);
+            Swal.fire({
+                title: '',
+                text: "آیا مطمئن به حذف هستید؟",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'بله',
+                cancelButtonText: 'خیر',
+                confirmButtonClass: 'btn btn-primary',
+                cancelButtonClass: 'btn btn-danger ml-1',
+                buttonsStyling: false,
+            }).then(function (result) {
+                if (result.value) {
+                    loading();
+                    let vm = {
+                        id: btn.attr('data-item-id')
+                    };
+                    $.ajax({
+                        beforeSend: setAuthHeader,
+                        type: "POST",
+                        url:  '/api/Account/Delete',
+                        data: vm,
+                        success: function (data) {
+                            if (data.status == '1') {
+                                $("#myTable").DataTable().row(btn.parents("tr")).remove().draw();
+                            }
+                            data.status == "0" ? Swal.fire('', data.message, 'error') : Swal.fire('', data.message, 'success');
+                        }
+                    })
+                }
+            });
+        });
+        function sepaisMarried(Number) {
+            Number += '';
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            x = Number.split('.');
+            y = x[0];
+            z = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(y))
+                y = y.replace(rgx, '$1' + ',' + '$2');
+            return y + z;
+        }
+
+        $(document).ready(async function () {
+
+            $("#notifCount").addClass("d-none");
+            //loadData
+            GetData('/api/Account/GetAllAdmins', {}, false);
+        });
+
+        function showContent(e) {
+            $("#modalParagraph").html($(e).val());
+            $("#rejectResultBtn").click();
+        }
+
+        //function changeCreateStatus(e) {
+        //    var statusId = $(e).attr("data-status");
+        //    $("#adverCreateStatusInModal").val(statusId);
+        //    adverId = $(e).attr("data-id");
+        //    $("#ShowDetailsBtn").click();
+        //}
+
+        function changeValue(val) {
+            if (val == "" || val == null || val == "null") {
+                return "----";
+            }
+            return val;
+        }
+
+        function userActivation(active) {
+            if (active == "true") return "فعال";
+            else return "غیر فعال";
+        }
+        function sendTicket(id) {
+            $("#userId").val(id);
+            $("#CreateTicket").modal("toggle");
+        }
+
+
+        function clear() {
+            $('.CreateAgentForm').trigger("reset");
+            $("#isActive").val(false)
+            $("#isActive").removeAttr('checked')
+        }
+
+        function openCreateModal() {
+            clear()
+            formUrl = baseUrl + "/CreateAdmin"
+        }
+
+        $(".CreateAgentForm").submit(function (e) {
+            $("#content").removeClass("error");
+            $("#subject").removeClass("error");
+            $("#file").removeClass("error");
+
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('isActive', getChecBoxValue('#isActive'))
+
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Post",
+                url: formUrl,
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.successCode) {
+                        toastr.success(data.message);
+                        GetData('/api/Account/GetAllAdmins', {}, true);
+                        $('#CreateAgent').modal('toggle')
+                        clear()
+                        //$("#CreateTicketClose").click();
+                        //$(".modal-backdrop").addClass("d-none");
+
+                    } else {
+                        toastr.error(data.message);
+                    }
+                    window.location.reload()
+                },
+                error: function (data) {
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+                    })
+                }
+            });
+
+        });
+
+        function EditItem(e) {
+
+            const id = changeValue($(e).attr("data-id"));
+            const userName = changeValue($(e).attr("data-username"));
+            const fullname = changeValue($(e).attr("data-fullname"));
+            const isActive = changeValue($(e).attr("data-isActive"));
+             
+             
+            $("#id").val(id);
+             
+            $("#userName").val(userName);
+            $("#fullname").val(fullname);
+            setCheckBoxValue(isActive, '#isActive')
+
+
+            //$("#email").val(email);
+            //$("#asignCount").val(asignCount);
+            //$("#address").val(address);
+            //$("#city").val(city);
+
+
+
+
+            //const phoneNUmber = changeValue($(e).attr("data-phoneNUmber"));
+            //const shebaNumber = changeValue($(e).attr("data-shebaNumber"));
+            //const staticPhoneNumber = changeValue($(e).attr("data-staticPhoneNumber"));
+            //const fullName = changeValue($(e).attr("data-fullName"));
+            //const email = changeValue($(e).attr("data-email"));
+            //const asignCount = changeValue($(e).attr("data-asignCount"));
+            //const address = changeValue($(e).attr("data-address"));
+            //const city = changeValue($(e).attr("data-city"));
+            //const isActive = changeValue($(e).attr("data-isActive"));
+            //const logo = $(e).attr("data-logo");
+            //const isMarried = $(e).attr("data-isMarried");
+            //const acceptRule = $(e).attr("data-acceptRule");
+            //const id = $(e).attr("data-id");
+
+            //const exemptionExpirestionDate = changeValue($(e).attr("data-exemptionExpirestionDate"));
+            //const exemptionExpirestionRecieveDate = changeValue($(e).attr("data-exemptionExpirestionRecieveDate"));
+            //const military = changeValue($(e).attr("data-military"));
+            //const birthday = changeValue($(e).attr("data-birthday"));
+
+
+            //$("#id").val(id);
+            //$("#phoneNumber").val(phoneNUmber);
+            //$("#shebaNumber").val(shebaNumber);
+            //$("#staticPhoneNumber").val(staticPhoneNumber);
+            //$("#fullName").val(fullName);
+            //$("#email").val(email);
+            //$("#asignCount").val(asignCount);
+            //$("#address").val(address);
+            //$("#city").val(city);
+
+            formUrl = baseUrl + "/EditAdmin"
+
+            //setCheckBoxValue(isActive, '#isActive')
+            //setCheckBoxValue(acceptRule, '#acceptRule')
+
+            //$("#logo").attr("src", "/Img/EmployeeAvatar/" + logo);
+            $("#CreateAgent").modal("toggle");
+        }
+
+
+        function BlockUnblock(e) {
+            console.log(e);
+            var id = $(e).attr("data-id");
+            var isActive = false;
+            let url = "";
+            if ($(e).prop('checked') == true) {
+                isActive = true;
+            }
+            if (isActive) {
+                url = "/api/Account/UnBlockUser?userId=" + id;
+                block(url);
+            } else {
+                url = "/api/Account/BlockUser?userId=" + id;
+
+                swal({
+                    title: "آیا مطمئن هستید؟",
+                    text: "با بلاک کردن کابر دسترسی را کاملا از بین میبرید!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            block(url);
+
+                        } else {
+                            $(e).prop('checked', true); // Checks it
+
+                        }
+                    });
+            }
+        }
+
+
+        function block(url) {
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "POST",
+                url: url,
+                contentType: 'application/json',
+                data: {},
+
+                success: function (data) {
+                    if (data.statusCode == '200') {
+                        toastr.success(data.message);
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (data) {
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+
+                    })
+                }
+            });
+        }
+
+    </script>
+
+}

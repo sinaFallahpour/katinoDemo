@@ -1,0 +1,674 @@
+﻿
+@{
+    ViewData["Title"] = "مدیریت طرح ها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+
+    <link rel="~/stylesheet" href="vendors/dataTable/dataTables.min.css" type="text/css">
+    <style>
+        table {
+            text-align: center;
+        }
+
+        #isUseResomeManegement {
+            margin-right: 1%;
+        }
+        /*  table td{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }*/
+        #createPlan {
+            margin-right: 9% !important;
+        }
+
+        .showLogoInIndex {
+            margin-top: 4%;
+        }
+
+        .discountFormGroup {
+            margin-top: 3.3%;
+            margin-left: -8%;
+            margin-right: 8%;
+        }
+
+        #hasDiscount, #isShowLogo, #hasResomeManagement {
+            margin: 3px 3px 2px 2px;
+        }
+
+        #duration {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black;
+        }
+
+        #showduration {
+            visibility: hidden;
+            width: 120px;
+            background-color: black;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 0;
+            /* Position the tooltip */
+            position: absolute;
+            z-index: 1;
+        }
+
+        #duration:hover #showduration {
+            visibility: visible;
+        }
+
+        .range-wrap {
+            position: relative;
+            margin: 0 auto 3rem;
+        }
+
+        .range {
+            width: 100%;
+        }
+
+        .bubble {
+            background: red;
+            color: white;
+            padding: 4px 12px;
+            position: absolute;
+            border-radius: 4px;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+        }
+
+            .bubble::after {
+                content: "";
+                position: absolute;
+                width: 2px;
+                height: 2px;
+                background: red;
+                top: -1px;
+                left: 50%;
+            }
+
+        #createPlanButton {
+            margin-top: 3%;
+            display: block;
+            margin-right: 35%;
+            width: 25%;
+            text-align: center;
+            padding: 2%;
+        }
+    </style>
+
+
+}
+<button type="button" id="createPlanButton" class="btn btn-primary mr-2 mb-2" data-toggle="modal" data-target="#createModal">
+    ایجاد طرح جدید
+</button>
+<hr />
+<table id="myTable" class="table table-striped table-bordered">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>عنوان</th>
+            <th>توضیحات</th>
+            <th>قیمت(تومان)</th>
+            <th>تخفیف</th>
+            <th>مدت استفاده از طرح</th>
+            <th>نمایش لوگو</th>
+            <th> زمان منقضی شدن آگهی</th>
+            <th>تعداد آگهی</th>
+            <th>تعداد آگهی های فوری</th>
+            <th>استفاده از مدیریت رزومه</th>
+            <th>نمایش در سایت</th>
+            <th>ویرایش</th>
+
+
+
+
+
+
+        </tr>
+    </thead>
+    <tbody id="rewsOfTable">
+    </tbody>
+</table>
+
+<!--CreateModal-->
+
+<div class="modal fade" tabindex="-1" role="dialog" id="createModal">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ایجاد طرح جدید</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form id="createPlan">
+                    <input type="hidden" id="id" name="planId" />
+                    <div class="form-row">
+                        <div class="form-group col-md-6">
+                            <label for="title">عنوان طرح</label>
+                            <input type="text" name="title" class="form-control" id="title" placeholder="عنوان طرح ">
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label for="content">
+                                توضیح مختصر
+                            </label>
+                            <textarea type="text" name="content" class="form-control" id="content" placeholder="توضیح مختصر"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="form-group col-md-3">
+                            <label for="price">قیمت(تومان)</label>
+                            <input type="text" name="price" class="form-control" id="price">
+                        </div>
+                        <div class="form-group col-md-2 discountFormGroup">
+                            <label class="form-check-label" for="hasDiscount">
+                                تخفیف؟
+                            </label>
+                            <input class="form-check-input" type="checkbox" id="hasDiscount">
+
+                        </div>
+                        <div class="form-group col-md-3 discountPercent d-none">
+
+                            <label class="discountGroup " for="discount">تخفیف</label>
+                            <input class="discountGroup  form-control" name="discount" type="text" id="discount" value="0">
+                        </div>
+                    </div>
+
+
+                    <div class="form-row justify-content-center">
+                        <div class="form-group col-md-11">
+                            <label for="">زمان استفاده از این طرح:</label>
+                            @*<input type="range" class="form-control-range" value="30" id="duration">*@
+                            <div class="range-wrap">
+                                <input id="duration" type="range" class="range" min="7" max="365" name="duration">
+                                <output class="bubble bg-warning"></output>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="form-row justify-content-center">
+                        <div class="form-group col-md-11">
+                            <label for="">زمان منقضی شدن هر آگهی:</label>
+                            @*<input type="range" class="form-control-range" value="30" id="duration">*@
+                            <div class="range-wrap">
+                                <input id="adverExpireTime" type="range" class="range" min="7" max="60" name="adverExpireTime">
+                                <output class="bubble bg-warning"></output>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-row">
+
+                        <div class="form-group col-md-3">
+                            <label for="adverCount">تعداد آگهی </label>
+                            <input type="text" class="form-control" id="adverCount" name="adverCount">
+                        </div>
+                        <div class="form-group col-md-3">
+                            <label for="immediateAdverCount">تعداد آگهی های فوری</label>
+                            <input type="text" class="form-control" id="immediateAdverCount" name="immediateAdverCount">
+                        </div>
+                        <div class="form-group col-md-2 discountFormGroup">
+                            <label class="form-check-label" for="isUseResomeManegement">
+                                استفاده از مدیریت رزومه؟
+                            </label>
+                            <input class="form-check-input" type="checkbox" id="isUseResomeManegement" name="isUseResomeManegement" value="true">
+
+                        </div>
+
+                    </div>
+                    <div class="form-row">
+
+                        <div class="form-group col-md-5 showLogoInIndex ">
+                            <label class="form-check-label" for="isShowLogo">
+                                نمایش لوگوی شرکت در صفحه اصلی؟
+                            </label>
+                            <input class="form-check-input" type="checkbox" id="isShowLogo">
+
+                        </div>
+                        <div class="form-group col-md-4 logoForShowingLogo d-none" style=" margin-right: -16%; ">
+
+                            <label class="discountGroup " for="logo">تعداد روز</label>
+                            <input class="discountGroup  form-control" type="text" id="logo" name="logo" value="0">
+                        </div>
+                    </div>
+                    <button type="submit" id="createPlanbtn" class="btn btn-block btn-primary m-auto btn-block">ثبت</button>
+
+
+                </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="closeModal" class="btn btn-danger w-25 mx-auto" style="display:block;text-align:center; margin-left:35%" data-dismiss="modal">بستن</button>
+                @*<button type="button" class="btn btn-primary">اعمال تغییرات</button>*@
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script src="~/vendors/dataTable/jquery.dataTables.min.js"></script>
+
+    <!-- Bootstrap 4 and responsive compatibility -->
+    <script src="~/vendors/dataTable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendors/dataTable/dataTables.responsive.min.js"></script>
+    <script>
+        //seprator
+        function separate(Number) {
+            Number += '';
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            x = Number.split('.');
+            y = x[0];
+            z = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(y))
+                y = y.replace(rgx, '$1' + ',' + '$2');
+            return y + z;
+        }
+        function GetData(url, data, isAlreadyTable) {
+            if (isAlreadyTable == true) {
+                $('#myTable').DataTable().destroy();
+            }
+            var oTable = $('#myTable').DataTable({
+                processing: true,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json"
+                },
+                ajax: {
+                    beforeSend: setAuthHeader,
+                    url: url,
+                    dataSrc: "",
+                    type: "GET",
+                    dataType: "json",
+                    delay: 1000,
+                    data: data
+                    //, success: function (res) {
+                    //    alert()
+                    //    console.log(res);
+                    //}
+                },
+                columns: [
+                    {
+                        data: 'id'
+                    }, {
+                        data: 'title'
+                    },
+                    {
+                        data: 'content'
+                    },
+                    {
+                        data: 'price',
+                        render: function (data, type, item) {
+
+
+                            return '<div class="form-group">' + separate(data) + ' تومان  ' + '</div>'
+                        }
+                    },
+                    {
+                        data: 'discount',
+                        render: function (data, type, item) {
+
+
+                            return '<div class="form-group">' + ' %  ' + data + '</div>'
+                        }
+                    },
+
+                    {
+                        data: "duration"
+                    },
+                    {
+                        data: "logo"
+                    },
+                    {
+                        data: "adverExpireTime"
+                    },
+                    {
+                        data: "adverCount"
+                    },
+                    {
+                        data: "immediateAdverCount"
+                    },
+                    {
+                        data: 'isUseResomeManegement',
+                        render: function (data, type, item) {
+                            var isChecked = item.isUseResomeManegement == true ? 'checked' : "";
+                            var isActive = item.isUseResomeManegement != true ? false : true;
+                            if (isActive) return `<i class="fa fa-check-circle text-success" style="font-size: 30px;"  aria-hidden="true"></i>`;
+                            else return `<i class="fa fa-minus-circle text-danger" style="font-size: 30px;"  aria-hidden="true"></i>`;
+                        }
+                    },
+
+                    {
+                        data: 'isActive',
+                        render: function (data, type, item) {
+                            var isChecked = item.isActive == true ? 'checked' : "";
+                            var isActive = item.isActive == true ? false : true;
+                            return `<label class="switch">
+                                                      <input type="checkbox" data-id=${item.id} onclick="ChangeActiveStatus(this)" ${isChecked} id="${item.id}_IsActive">
+                                                      <span class="slider round"></span>
+                                                    </label>`;
+                        }
+                    },
+                    {
+
+                        data: "id",
+                        render: function (data, type, item) {
+
+
+                            return `<i class="fa fa-pencil-square-o text-warning" style="cursor: pointer;font-size: 30px;"
+                                aria-hidden="true" data-id=${data}     onclick="editPlan(this)"></i>`;
+                        }
+                    }
+                ],
+            });
+        };
+        function ChangeActiveStatus(e) {
+
+            var id = $(e).attr('id');
+            id = id.replace("_IsActive", "");
+            var isActive = false;
+            if ($(e).prop("checked") == true) {
+                isActive = true;
+            }
+            else if ($(e).prop("checked") == false) {
+                isActive = false;
+            }
+            if (isActive) {
+
+                $.ajax({
+                    beforeSend: setAuthHeader,
+                    method: "Post",
+                    url: '/api/Plan/EnanlePlan?planId=' + id,
+                    contentType: 'application/json',
+                    data: {},
+                    success: function (data) {
+                        if (data.statusCode == '200') {
+
+                            toastr.success(data.message);
+                            GetData('/api/Plan/GetAllPlansForAdmin?page=1&pageSize=100', {}, true);
+
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function (data) {
+                        var errors = data.responseJSON.Message;
+                        errors.forEach(elem => {
+                            if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                            if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                            toastr.error(elem);
+
+
+                        })
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    beforeSend: setAuthHeader,
+                    method: "Post",
+                    url: '/api/Plan/DisablePlan?planId=' + id,
+                    contentType: 'application/json',
+                    data: {},
+                    success: function (data) {
+                        if (data.statusCode == '200') {
+                            GetData('/api/Plan/GetAllPlansForAdmin?page=1&pageSize=100', {}, true);
+
+                            toastr.success(data.message);
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function (data) {
+                        var errors = data.responseJSON.Message;
+                        errors.forEach(elem => {
+                            if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                            if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                            toastr.error(elem);
+
+
+                        })
+                    }
+                });
+            }
+        }
+
+        var isEdit = false;
+        $(document).ready(function () {
+
+            GetData('/api/Plan/GetAllPlansForAdmin?page=1&pageSize=100', {}, false);
+
+        });
+
+        $('#hasResomeManagement').click(function () {
+            if ($(this).prop("checked") == true) {
+                $("#hasResomeManagement").val("true");
+            }
+            else if ($(this).prop("checked") == false) {
+                $("#hasResomeManagement").val("false");
+            }
+        });
+        $('#hasDiscount').click(function () {
+            if ($(this).prop("checked") == true) {
+                $(".discountPercent").removeClass("d-none");
+            }
+            else if ($(this).prop("checked") == false) {
+                $(".discountPercent").addClass("d-none");
+            }
+        });
+        $('#isShowLogo').click(function () {
+            if ($(this).prop("checked") == true) {
+                $(".logoForShowingLogo").removeClass("d-none");
+            }
+            else if ($(this).prop("checked") == false) {
+                $(".logoForShowingLogo").addClass("d-none");
+            }
+        });
+        //rang input customize
+        $('#formControlRange').change(function () {
+            $("#showduration").html($(this).val())
+        });
+        const allRanges = document.querySelectorAll(".range-wrap");
+        allRanges.forEach(wrap => {
+            const range = wrap.querySelector(".range");
+            const bubble = wrap.querySelector(".bubble");
+
+            range.addEventListener("input", () => {
+                setBubble(range, bubble);
+            });
+            setBubble(range, bubble);
+        });
+
+        function setBubble(range, bubble) {
+            const val = range.value;
+            const min = range.min ? range.min : 0;
+            const max = range.max ? range.max : 100;
+            const newVal = Number(((val - min) * 100) / (max - min));
+            bubble.innerHTML = `${val} روز`;
+
+            // Sorta magic numbers based on size of the native UI thumb
+            bubble.style.right = `calc(${newVal}% + (${8 - newVal * 0.15}px) - 65px)`;
+        }
+        // End rang input customize
+
+        $('#createPlanbtn').click(function (e) {
+            //$(".modal-backdrop").removeClass("d-none");
+            //$(".modal-backdrop").addClass("d-none");
+
+            var formSerilized = serializeForm(document.querySelector('#createPlan'));
+            if ($("#isUseResomeManegement").prop('checked') == true) {
+                formSerilized.isUseResomeManegement = true;
+
+            }
+            if (isEdit) {
+                e.preventDefault();
+
+                $.ajax({
+                    beforeSend: setAuthHeader,
+                    method: "POST",
+                    url: '/api/Plan/EditPlan',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formSerilized),
+                    //cache: false,
+                    //contentType: false,
+                    //processData: false,
+                    success: function (data) {
+                        if (data.statusCode == '200') {
+                            toastr.success(data.message);
+                            //$("#closeModal").click();
+                            //$(".modal-backdrop").addClass("d-none");
+                            $("#createModal").modal("toggle");
+                            $(".modal-backdrop").remove();
+
+
+                            GetData('/api/Plan/GetAllPlansForAdmin?page=1&pageSize=100', {}, true);
+
+
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function (data) {
+                        if (data.responseJSON == undefined) {
+                            toastr.error("مشکلی رخ داده است");
+                            return;
+
+                        }
+                        var errors = data.responseJSON.message;
+                        errors.forEach(elem => {
+                            if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                            if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                            toastr.error(elem);
+
+
+                        })
+                    }
+                });
+
+                isEdit = false;
+            }
+            else {
+                e.preventDefault();
+                $.ajax({
+                    beforeSend: setAuthHeader,
+                    method: "POST",
+                    url: '/api/Plan/CreatePlan',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formSerilized),
+                    //cache: false,
+                    //contentType: false,
+                    //processData: false,
+                    success: function (data) {
+                        if (data.statusCode == '200') {
+                            toastr.success(data.message);
+                            $(".formLogin").removeClass("d-block").addClass("d-none");
+
+                            //$("#closeModal").click();
+                            //$(".modal-backdrop").addClass("d-none");
+                            $("#createModal").modal("toggle");
+                            $(".modal-backdrop").remove();
+
+                            GetData('/api/Plan/GetAllPlansForAdmin?page=1&pageSize=100', {}, true);
+
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function (data) {
+                        if (data.responseJSON == undefined) {
+                            toastr.error("مشکلی رخ داده است");
+                            return;
+
+                        }
+                        var errors = data.responseJSON.message;
+                        errors.forEach(elem => {
+                            if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                            if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                            toastr.error(elem);
+
+
+                        })
+                    }
+                });
+                isEdit = false;
+            }
+
+        });
+        var opendBefore = false;
+        function editPlan(e) {
+            //$(".modal-backdrop").remove();
+
+            var id = $(e).attr("data-id");
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Get",
+                url: '/api/Plan/LoadPlan?planId=' + id,
+                contentType: 'application/json',
+                data: {},
+
+                success: function (data) {
+                    for (let id in data.resul) {
+                        if ($(`#${id}`)) $(`#${id}`).val(data.resul[id]);
+                        if ($(`#${id}`)) $(`#${id}`).html(data.resul[id]);
+                        if ($(`#${id}`).prop('checked', data.resul[id]));
+
+
+                        if (Number($("#discount").val()) > 0) {
+                            $("#hasDiscount").prop('checked', true);
+                            $(".discountPercent").removeClass("d-none");
+
+                        }
+                        if (Number($("#logo").val()) > 0) {
+                            $("#isShowLogo").click();
+
+                        }
+
+                        const allRanges = document.querySelectorAll(".range-wrap");
+                        allRanges.forEach(wrap => {
+                            const range = wrap.querySelector(".range");
+                            const bubble = wrap.querySelector(".bubble");
+
+                            range.addEventListener("input", () => {
+                                setBubble(range, bubble);
+                            });
+                            setBubble(range, bubble);
+                        });
+
+                    }
+                    $("#createPlanButton").click();
+                    openModel($("#createModal"), opendBefore);
+
+                    opendBefore = true;
+                    isEdit = true;
+                },
+                error: function (data) {
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+
+                    })
+                }
+            });
+        }
+
+    </script>
+}

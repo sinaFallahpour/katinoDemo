@@ -1,0 +1,186 @@
+.katino-services-dropdown {
+  position: relative;
+}
+
+.katino-services-dropdown .ksd__btn {
+  color: #fff;
+  cursor: pointer;
+}
+
+.katino-services-dropdown .list-level-0 {
+  z-index: 1000 !important;
+  opacity: 0;
+  visibility: hidden;
+  position: absolute;
+  top: 40px;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  right: 0;
+}
+
+.katino-services-dropdown .list-level-0 .inner {
+  border: 1px solid #e0e0e0;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  position: relative;
+  width: 20vw;
+  min-width: 250px;
+  overflow-y: scroll;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul {
+  position: relative;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li {
+  position: relative;
+  cursor: pointer;
+  z-index: 1000;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li:hover {
+  background-color: #ccc !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li:hover > a {
+  color: #fff !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li:hover > i {
+  color: #fff !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li:hover .list-level-1 {
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li > a {
+  color: #444;
+  font-weight: 500;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li > i {
+  color: #444;
+  font-weight: 500;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 {
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  position: absolute;
+  top: 0rem;
+  right: calc(20vw - 2px);
+  width: 20vw;
+  background-color: #fff;
+  visibility: hidden;
+  opacity: 0 !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li {
+  position: relative;
+  cursor: pointer;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li:hover {
+  background-color: #ccc !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li:hover > a {
+  color: #fff !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li:hover > i {
+  color: #fff !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li:hover .list-level-2 {
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li > a {
+  color: #444;
+  font-weight: 500;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li > i {
+  color: #444;
+  font-weight: 500;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li .list-level-2 {
+  border: 1px solid #e0e0e0;
+  border-radius: 0.5rem;
+  background-color: #fff;
+  position: absolute;
+  top: 0;
+  width: 40vw;
+  right: calc(20vw - 12px);
+  visibility: hidden;
+  opacity: 0;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li .list-level-2 .list-level-2__ul .list-level-2__ul__li {
+  cursor: pointer;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li .list-level-2 .list-level-2__ul .list-level-2__ul__li:hover {
+  background-color: #ccc !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li .list-level-2 .list-level-2__ul .list-level-2__ul__li:hover a {
+  color: #fff !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li .list-level-2 .list-level-2__ul .list-level-2__ul__li:hover i {
+  color: #fff !important;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li .list-level-2 .list-level-2__ul .list-level-2__ul__li a {
+  color: #444;
+  font-weight: 500;
+}
+
+.katino-services-dropdown .list-level-0 .inner .list-level-0__ul .list-level-0__ul__li .list-level-1 .list-level-1__ul .list-level-1__ul__li .list-level-2 .list-level-2__ul .list-level-2__ul__li i {
+  color: #444;
+  font-weight: 500;
+}
+
+.show-ksd__list#ksd__list.list-level-0 {
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.show-categories {
+  opacity: 1 !important;
+  visibility: visible !important;
+  max-height: 400px !important;
+  z-index: 20 !important;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+
+.categories-dropdown {
+  opacity: 0;
+  width: calc(20vw - 10px);
+  visibility: hidden;
+  max-height: 0;
+  position: absolute;
+  top: 2.9rem;
+  right: 0;
+  background-color: #fafafa;
+  border: 1px solid #ebebeb;
+  border-radius: 3px;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+}
+/*# sourceMappingURL=style.css.map */

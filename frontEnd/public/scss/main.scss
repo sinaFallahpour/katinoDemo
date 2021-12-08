@@ -1,0 +1,340 @@
+@import "variables";
+@import "mixins";
+@import "globalHeader";
+@import "globalFooter";
+@import "dashNav";
+@import "cards";
+@import "home";
+@import "inputs";
+@import "buttons";
+@import "employerDash";
+@import "paymentFactor";
+@import "companies";
+@import "employersLanding";
+
+// Public
+html,
+body {
+  height: 100% !important;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  // background: $bg-body !important;
+  background: url(//panel.katinojob.ir/patterns/main.png) !important;
+  background-position: center !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
+// Fonts Family
+@include font($ir-r);
+@include font($ir-b);
+@include font($ir-bl);
+
+.ir- {
+  &r {
+    font-family: $ir-r !important;
+  }
+
+  &b {
+    font-family: $ir-b !important;
+  }
+  &bl {
+    font-family: $ir-bl !important;
+  }
+}
+
+// Font Sizes
+.fs- {
+  &s {
+    font-size: $fs-s !important;
+  }
+
+  &m {
+    font-size: $fs-m !important;
+  }
+
+  &l {
+    font-size: $fs-l !important;
+  }
+}
+
+// Paragraphs Typography
+p {
+  &.fs- {
+    &s {
+      @include line-height($fs-s);
+    }
+
+    &m {
+      @include line-height($fs-m);
+    }
+
+    &l {
+      @include line-height($fs-l);
+    }
+  }
+}
+
+// Backgrounds
+.bg- {
+  &body {
+    background-color: $bg-body !important;
+  }
+
+  &logo {
+    background-color: $logo !important;
+  }
+  &danger {
+    background: $danger !important;
+  }
+
+  &danger-light {
+    background: $danger-light !important;
+  }
+
+  &primary {
+    background: $primary !important;
+  }
+
+  &primary-light {
+    background: $primary-light !important;
+  }
+
+  &success-light {
+    background: $success-light !important;
+  }
+}
+
+// Text Colors
+.c- {
+  &grey {
+    color: $grey !important;
+  }
+
+  &light {
+    color: $light !important;
+  }
+
+  &regular {
+    color: $regular !important;
+  }
+
+  &dark {
+    color: $dark !important;
+  }
+  &main {
+    color: $system !important;
+  }
+  &warning {
+    color: $warning !important;
+  }
+  &primary {
+    color: $primary !important;
+  }
+  &success {
+    color: $success !important;
+  }
+  &danger {
+    color: $danger !important;
+  }
+  &gold {
+    color: $gold !important;
+  }
+}
+
+// Shadows
+.navbar-shadow {
+  box-shadow: $navbar-shadow;
+}
+
+.srounded- {
+  &sm {
+    border-radius: 5px !important;
+  }
+
+  &md {
+    border-radius: 15px !important;
+  }
+}
+
+.sbs-content {
+  box-shadow: 5px 5px 15px #99999905;
+}
+
+.fa-chevron-left:before {
+  display: flex;
+  align-items: center;
+}
+
+.refresh-code {
+  span {
+    font-family: $ir-r;
+    font-size: 1rem;
+  }
+}
+
+.sp-05 {
+  padding: 5px !important;
+}
+
+.ck.ck-content {
+  height: 250px;
+}
+
+.Toastify__toast-body {
+  font-family: $ir-r;
+}
+
+.bookmarker-btn {
+  cursor: pointer;
+}
+
+.desc-separator {
+  width: 50px;
+  height: 4px;
+  background: $light;
+  border-radius: 2px;
+}
+
+.cursor-pointer {
+  cursor: pointer !important;
+}
+
+.badge-danger {
+  background: $danger-light !important;
+  color: $danger !important;
+}
+
+.resume-quality {
+  .holder {
+    width: 150px;
+    height: 150px;
+    border-radius: 100%;
+    overflow: hidden;
+    border: 3px solid #eee;
+
+    .quality {
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: $success;
+    }
+  }
+}
+
+.ad-info-header {
+  .tabs {
+    .tab-item {
+      &:first-child {
+        border-radius: 0 5px 5px 0;
+      }
+
+      &:last-child {
+        border-radius: 5px 0 0 5px;
+      }
+
+      &:not(.active) {
+        background: $warning-light;
+        border-bottom: 2px solid transparent;
+        .tab-link {
+          color: #666 !important;
+        }
+      }
+
+      &.active {
+        background: #ffe9ad;
+        border-bottom: 2px solid $warning;
+        .tab-link {
+          color: $warning !important;
+        }
+      }
+    }
+  }
+}
+
+.ad-info-sidebar {
+  .checkboxes {
+    .number {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+}
+
+.request-details-intro {
+  .tabs {
+    .tabs-item {
+      &:not(.active) {
+        color: #666;
+        border-bottom: 3px solid transparent;
+      }
+
+      &.active {
+        color: $primary;
+        border-bottom: 3px solid $primary;
+      }
+    }
+  }
+}
+
+.sended-resume {
+  border-radius: 5px;
+  border-top-right-radius: 0;
+}
+
+@media only screen and (max-width: 991.99px) {
+  .ad-info-header {
+    .options {
+      .options-item {
+        display: block;
+        float: right;
+        width: 50%;
+
+        &:nth-child(1),
+        &:nth-child(2) {
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+
+  .ad-info-sidebar {
+    position: relative;
+    width: 100vw !important;
+    background: #fff;
+    transition: 0.3s;
+    position: fixed;
+    top: 0;
+    right: -100vh;
+    z-index: 1100;
+    height: 100vh;
+    overflow-y: auto;
+    padding-bottom: 50px;
+    &.active {
+      right: 0;
+    }
+
+    .submit-filter {
+      transition: all 0.3s ease;
+      position: fixed;
+      bottom: 0;
+      right: -110vw;
+      width: 100%;
+      display: none;
+    }
+
+    &.active {
+      .submit-filter {
+        display: block;
+        right: 0;
+      }
+    }
+  }
+}

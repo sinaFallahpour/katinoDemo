@@ -1,0 +1,263 @@
+﻿@model Domain.Entities.User
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "میزکار";
+    Layout = "~/Views/Shared/_Refrence.cshtml";
+
+}
+@section styles{
+    <link rel="shortcut icon" href="~/assets/media/image/favicon.png" />
+
+    <!-- Plugin styles -->
+    <link rel="stylesheet" href="~/vendors/bundle.css" type="text/css">
+
+    <!-- Slick.js styles -->
+    <link rel="stylesheet" href="~/vendors/slick/slick.css" type="text/css">
+    <link rel="stylesheet" href="~/vendors/slick/slick-theme.css" type="text/css">
+    <!-- Prism -->
+    <link rel="stylesheet" href="~/vendors/prism/prism.css" type="text/css">
+
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="~/assets/css/app.min.css" type="text/css">
+    <style>
+        .myCard {
+            height: 37%;
+        }
+
+        .table-striped > tr {
+            text-indent: 30px;
+        }
+
+        .highcharts-figure, .highcharts-data-table table {
+            min-width: 320px;
+            max-width: 600px;
+            margin: 1em auto;
+        }
+
+        .highcharts-data-table table {
+            font-family: Verdana, sans-serif;
+            border-collapse: collapse;
+            border: 1px solid #EBEBEB;
+            margin: 10px auto;
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .highcharts-data-table caption {
+            padding: 1em 0;
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .highcharts-data-table th {
+            font-weight: 600;
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table td, .highcharts-data-table th, .highcharts-data-table caption {
+            padding: 0.5em;
+        }
+
+        .highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even) {
+            background: #f8f8f8;
+        }
+
+        .highcharts-data-table tr:hover {
+            background: #f1f7ff;
+        }
+
+
+        input[type="number"] {
+            min-width: 50px;
+        }
+    </style>
+
+}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card-body">
+
+            <form id="CreateSettingForm">
+                <input type="hidden" value="" name="id" id="id" />
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="description">توضیحات </label>
+                        <textarea asp-for="Description" type="text" name="description" class="form-control" id="description"></textarea>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="iframe">iframe گوگل مپ </label>
+                        <textarea asp-for="Iframe" class="form-control" rows="2"></textarea>
+                    </div>
+                </div>
+                <button type="submit" id="createSetting" class="btn btn-block btn-primary m-auto btn-block">ثبت</button>
+
+
+            </form>
+        </div>
+        <h2>گالری</h2>
+        <div class="card-body">
+            <form id="imageForm">
+                <input type="hidden" value="" name="id" id="id" />
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="description">عکس جدید </label>
+                        <input type="file" name="image" class="form-control" id="image" />
+                    </div>
+                    <button style=" margin-left: auto !important; margin-bottom: auto; margin-top: auto;" type="submit" class="btn btn-primary">ثبت</button>
+                </div>
+
+
+            </form>
+            <div class="col-md-12">
+
+                <div class="card-group">
+                        <div class="row" id="gallerySpace">
+                    @*@foreach (var item in Model.Gallery)
+                    {
+                            <div class="col-4">
+
+                                <div class="card">
+                                    <img  src="@item.Url" class="card-img-top" alt="image">
+                                    <div class="card-body">
+                                        <a style="color:white" asp-action="deleteImage" asp-route-id="@item.Id" class="btn btn-danger">حذف</a>
+                                    </div>
+                                </div>
+                            </div>
+                    }*@
+                        </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- end::main content -->
+@section Scripts{
+    <script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+
+    <script type="text/javascript" src="~/assets/js/examples/dashboard.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/exporting.js"></script>
+    <script src="https://code.highcharts.com/modules/export-data.js"></script>
+    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+    @*<script src="~/Js/JwtRefrence.js"></script>*@
+@*<script>
+        CKEDITOR.replace('description');
+        $(function () {
+
+               $.ajax({
+                    beforeSend: setAuthHeader,
+                    method: "Get",
+                    url: '/api/Account/GetRefrenceDashboardInfo',
+                    contentType: 'application/json',
+                    data: {},
+                   success: function (data) {
+                       //toastr.success(data.message);
+                       $("#factor").html(data.resul.factorsCount);
+                       $("#adver").html(data.resul.adverCount);
+                       $("#employee").html(data.resul.employeeCount);
+                       $("#employer").html(data.resul.employerCount);
+                       $("#ticket").html(data.resul.ticketCount);
+                       $("#order").html(data.resul.ordersCount);
+
+                    },
+                   error: function (error) {
+                       tosastr.error(error.message);
+
+                    }
+            });
+            $('.slick-js').slick({
+                speed: 500,
+                arrows: false,
+                slidesToShow: 5,
+                slidesToScroll: 1,
+                autoplay: true,
+                autoplaySpeed: 2000,
+                responsive: [
+                    {
+                        breakpoint: 1200,
+                        settings: {
+                            slidesToShow: 3
+                        }
+                    },
+                    {
+                        breakpoint: 992,
+                        settings: {
+                            slidesToShow: 2
+                        }
+                    },
+                    {
+                        breakpoint: 768,
+                        settings: {
+                            slidesToShow: 1
+                        }
+                    }
+                ]
+            });
+
+
+        })
+
+
+        //set info top
+         //$("#employee").html('@ViewBag.EmployeeCount')
+        //$("#employer").html('@ViewBag.EmployerCount')
+        //$("#ticket").html('@ViewBag.TicketCount')
+        //$("#factor").html('@ViewBag.FactorsCount')
+        //$("#adver").html('@ViewBag.AdverCount')
+        //$("#order").html('@ViewBag.OrdersCount')
+        //
+        $('#imageForm').submit(function (e){
+            e.preventDefault();
+            let data = new FormData(this);
+            $.ajax({
+                beforeSend: setAuthHeader,
+                url: '/api/profileApi/AddImage',
+                method: 'POST',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (data) {
+                    location.reload();
+                }
+            })
+        })
+
+        $('#CreateSettingForm').submit(function (e){
+            e.preventDefault();
+            let data = new FormData(this);
+            $.ajax({
+                beforeSend: setAuthHeader,
+                url: '/api/profileApi/Submit',
+                method: 'POST',
+                cache: false,
+                contentType: false,
+                processData: false,
+                data: data,
+                success: function (data) {
+                    location.reload();
+                }
+            })
+        })
+
+        $.ajax({
+            url: '/api/profileApi/Info',
+            beforeSend: setAuthHeader,
+            method: 'GET',
+            success: function (data) {
+                console.log(data);
+                CKEDITOR.instances['description'].setData(data.description);
+                $('#Iframe').val(data.iframe);
+                $('#gallerySpace').empty();
+                for (var i = 0; i < data.gallery.length; i++) {
+                    let item = data.gallery[i];
+                    $('#gallerySpace').append('<div class="col-4"><div class="card"><img src="' + item.url + '" class="card-img-top" alt="image"><div class="card-body"><a style="color:white" href="/api/profileApi/deleteImage?id=' + item.id + '" class="btn btn-danger">حذف</a></div></div></div>')
+                }
+            }
+        })
+</script>*@
+}

@@ -1,0 +1,440 @@
+﻿<!-- end::preloader -->
+
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>کاتینو - میزکار نماینده</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/assets/media/image/favicon.png" />
+
+    <!-- Plugin styles -->
+    <link rel="stylesheet" href="~/vendors/bundle.css" type="text/css">
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="~/assets/css/app.min.css" type="text/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" />
+    <style>
+        .exit {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .formLogin, .formVerify {
+            padding: 5%;
+            text-align: center;
+            align-items: center;
+            width: 40%;
+            margin: auto;
+            background: #fff;
+            border-radius: 5%;
+        }
+
+        .a-link {
+            margin-top: -7%;
+            margin-right: 47%;
+            cursor: pointer
+        }
+
+        #title {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .divVerify {
+            display: inline-block !important;
+        }
+
+        .timer {
+            width: 50%;
+            margin: auto;
+            padding: 5%;
+            text-align: center;
+            align-items: center;
+        }
+
+        h1 {
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- begin::preloader-->
+    <div class="preloader">
+        <div class="preloader-icon"></div>
+    </div>
+    <!-- end::preloader -->
+
+    <div class="form-wrapper">
+
+        <!-- logo -->
+
+        <div class="form-wrapper bo">
+
+            <!-- logo -->
+            <div id="logo">
+                <img class="logo" src="~/assets/media/image/logo-F.png.png" alt="image">
+            </div>
+            <!-- ./ logo -->
+
+            <h5 id="title" class="text-center">اطلاعات خود را تکمیل کنید</h5>
+
+            <!-- form -->
+            <form class="formLogin d-block ">
+                <div class="form-row">
+
+                    <div class="col-md-3 mb-3">
+                        <label for="FullName">نام و نام خانوادگی</label>
+                        <input type="text" class="form-control" id="FullName"
+                               name="FullName" placeholder="نام و  نام خانوادگی" required=""
+                               oninvalid="this.setCustomValidity('لطفا نام و نام خانوادگی را وارد کنید')" oninput="setCustomValidity('')">
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label for="PhoneNumber">شماره موبایل </label>
+                        <div class="input-group">
+
+                            <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber"
+                                   placeholder="شماره موبایل" required=""
+                                   oninvalid="this.setCustomValidity('لطفا شماره موبایل را وارد کنید')" oninput="setCustomValidity('')">
+                        </div>
+                    </div>
+                    <div class="col-md-5 mb-3">
+                        <label for="EmergencPhone">شماره تلفن ثابت</label>
+                        <input type="text" class="form-control" id="EmergencPhone" name=""
+                               placeholder="شماره تلفن ثابت">
+
+                    </div>
+                </div>
+                <div class="form-row">
+
+                    <div class="col-md-4 mb-3">
+                        <label for="City">شهر</label>
+                        <select class="form-control" id="City" name="City" 
+                                required=""
+                                oninvalid="this.setCustomValidity(' لطفا شهر را وارد کنید')" oninput="setCustomValidity('')">
+                            <option></option>
+                            @foreach (var item in ViewBag.Cities as List<string>)
+                            {
+                                <option value="@item">@item</option>
+
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <label for="Address">آدرس</label>
+                        <input type="text" class="form-control" id="Address" name="Address"
+                               placeholder="آدرس" required=""
+                               oninvalid="this.setCustomValidity('  لطفا آدرس را وارد کنید')" oninput="setCustomValidity('')">
+                    </div>
+                </div>
+                <div class="form-row">
+
+                    <div class="col-md-3 mb-3">
+                        <label for="ShebaNumber">شماره شبا</label>
+                        <input type="text" class="form-control" id="ShebaNumber" name="ShebaNumber"
+                               placeholder="شماره شبا" required=""
+                               oninvalid="this.setCustomValidity('  لطفا شماره شبا را وارد کنید')" oninput="setCustomValidity('')">
+                    </div>
+                    @*<div class="col-md-3 mb-3">
+                            <label for="Logo">آواتار</label>
+                            <input type="file" class="form-control" id="Logo" name="Logo"
+                                   placeholder="آواتار" >
+
+                        </div>*@
+
+                    <div class="col-md-3 mb-3">
+                        <div class="form-check" style="margin-top: 26%;">
+                            <input class="form-check-input" type="checkbox" value="false"
+                                   id="IsMarried" name="IsMarried">
+                            <label class="form-check-label" for="IsMarried">
+                                وضعیت تاهل
+                            </label>
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-3 mb-3">
+                        <div class="form-check" style="margin-top: 6%;">
+                            <label class="form-check-label" for="Gender">
+                                جنسیت
+                            </label>
+                            <select class="form-control" id="Gender" name="Gender">
+                                <option value="2">مرد</option>
+                                <option value="3">زن</option>
+                            </select>
+
+
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+                <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value=""
+                               id="invalidCheck" required=""
+                               oninvalid="this.setCustomValidity('  لطفا تیک موافقت با قوانین و مقررات بزنید')" oninput="setCustomValidity('')">
+                        <label class="form-check-label" for="invalidCheck">
+                            موافقت با قوانین و مقررات
+                        </label>
+
+                    </div>
+                </div>
+
+                <button type="submit" id="login" class="btn btn-primary btn-block">دریافت کد</button>
+                <hr>
+            </form>
+
+            <form class="formVerify d-none needs-validation">
+                <div class="form-group d-flex align-items-center divVerify w-100">
+                    <input type="text" name="phoneNumber" id="verifyPhoneNumber" class="form-control " placeholder="شماره تلفن" required readonly>
+
+
+                    <input type="text" name="verifyCode" id="verifyCode" class="form-control " placeholder="کد 6 رقمی" required autofocus>
+
+                </div>
+                <div class="row text-center timer">
+                    <h1 id="second">00</h1>
+                    <h1>:</h1>
+                    <h1 id="minute">02</h1>
+
+
+                </div>
+                <button type="button" id="verify" class="btn btn-primary btn-block">ورود</button>
+                <button type="button" id="sendAgain" class="btn btn-primary d-none mt-2">ارسال مجدد</button>
+                <hr>
+                @*<div class="exit">
+                        <p class="btn btn-sm btn-outline-light ml-1 m-auto" onclick="window.close()">خروج</p>
+                    </div>*@
+
+            </form>
+            <!-- ./ form -->
+            <a class="btn btn-lg btn-light-warning a-link" href="/Refrence/Login">ورود به حساب</a>
+
+        </div>
+
+
+    </div>
+
+    <!-- Plugin scripts -->
+    <script src="~/vendors/bundle.js"></script>
+
+    <!-- App scripts -->
+    <script src="~/assets/js/app.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous"></script>
+
+    <script>
+        $("#City").select2();
+        //(function () {
+
+        //})();
+        //function validate() {
+        //    //window.addEventListener('load', function () {
+        //    var forms = document.getElementsByClassName('needs-validation');
+        //    var validation = Array.prototype.filter.call(forms, function (form) {
+        //        form.addEventListener('submit', function (event) {
+        //            if (form.checkValidity() === false) {
+        //                event.preventDefault();
+        //                event.stopPropagation();
+        //            }
+        //            form.classList.add('was-validated');
+
+        //        }, false);
+        //    });
+        //    return validation;
+
+        //    //}, false);
+        //}
+
+
+
+        async function getUserRole() {
+            let finalResult = await $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Get",
+                url: '/api/Account/GetUserRole',
+                contentType: 'application/json',
+                data: {},
+                success: function (data) {
+                    return data.resul;
+                },
+                error: function (data) {
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        toastr.error(elem);
+
+                    })
+                }
+            });
+            return finalResult;
+        }
+
+
+
+        $('.formLogin').submit(function (e) {
+
+            e.preventDefault();
+
+            localStorage.removeItem("token");
+
+            var formData = new FormData(this);
+            $.ajax({
+                //beforeSend: setAuthHeader,
+                method: "Post",
+                url: '/api/Account/RefrencRegister',
+                data: JSON.stringify(serializeForm(this)),
+                //cache: false,
+                contentType: 'application/json',
+                //processData: false,
+                success: function (data) {
+
+                    if (data.successCode) {
+                        toastr.success(data.message);
+                        $(".formLogin").removeClass("d-block").addClass("d-none");
+                        $("#verifyPhoneNumber").val(data.resul);
+                        $("#title").html("کد 6 رقمی را وارد کنید");
+                        $(".formVerify").removeClass("d-none").addClass("d-block");
+                        setTimer();
+
+
+                    } else {
+
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (data) {
+
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+                    })
+                }
+            });
+        });
+        $('#verify').click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                method: "POST",
+                url: '/api/Account/VerifyCode',
+                contentType: 'application/json',
+                data: JSON.stringify(serializeForm(document.querySelector('.formVerify'))),
+                success: function (data) {
+                    if (data.statusCode == '200') {
+
+
+                        asyncLocalStorage.setItem('token', data.resul.token).then(function () {
+                            return asyncLocalStorage.getItem('token');
+                        }).then(function (value) {
+                            getUserRole().then((value) => {
+                                if (value.resul == 'Refrence') {
+                                    window.location.href = '/Refrence/Dashboard'
+                                }
+                                else {
+                                    toastr.error('عدم دسترسی');
+                                    location.reload();
+
+                                }
+                            });
+                        });
+                        toastr.success(data.message);
+
+
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (data) {
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        toastr.error(elem);
+
+                    })
+                }
+            });
+        });
+
+        $("#sendAgain").click(function () {
+            $(".formVerify").removeClass("d-block").addClass("d-none");
+            $("#title").html("شماره تلفن خودرا وارد کنید");
+            $(".formLogin").removeClass("d-none").addClass("d-block");
+            $("#second").text("00");
+            $("#minute").text("02");
+            $(".timer").removeClass("d-none");
+            $("#sendAgain").addClass("d-none");
+            $("#verify").removeClass("d-none");
+
+
+        });
+        //CountDown
+
+        function setTimer() {
+            var timer_interval = setInterval(function () {
+                seconds = new Number($("#second").text());
+                minutes = new Number($("#minute").text());
+
+                if (seconds == 0 && minutes != 0) {
+                    minutes = minutes - 1;
+                    seconds = 59;
+                }
+                else if (seconds <= 59 && seconds != 0) {
+                    seconds = seconds - 1;
+                }
+                else if (seconds == 0 && seconds == 0) {
+                    clearInterval(timer_interval);
+                    $(".timer").addClass("d-none");
+                    $("#sendAgain").removeClass("d-none");
+                    $("#verify").addClass("d-none");
+
+
+                }
+                else {
+
+                    clearInterval(timer_interval);
+                }
+                if (seconds < 10) {
+                    $("#second").text("0" + seconds);
+
+                }
+                else {
+                    $("#second").text(seconds);
+
+                }
+                if (minutes < 10) {
+                    $("#minute").text("0" + minutes);
+
+                }
+                else {
+                    $("#minute").text(minutes);
+
+                }
+            }, 1000);
+
+
+        }
+    </script>
+</body>
+
+</html>

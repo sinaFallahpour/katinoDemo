@@ -1,0 +1,65 @@
+.ad-2 {
+  border: 1px solid #e0e0e0;
+  border-radius: 0.9rem;
+  background-color: #fff;
+  -webkit-box-shadow: 0 3px 6px 2px #eee;
+          box-shadow: 0 3px 6px 2px #eee;
+}
+
+.ad-2 .ad2-header .ad2-title {
+  color: #273c85;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+.ad-2 .ad2-header .ad2-save {
+  border-radius: 50%;
+  background-color: #273c85;
+  color: #fff;
+  cursor: pointer;
+}
+
+.ad-2 .ad2-body .ad2-feature .ad2-feature__key .ad2-feature__key__icon {
+  font-size: 1.1rem;
+  color: #273c85;
+}
+
+.ad-2 .ad2-body .ad2-feature .ad2-feature__key .ad2-feature__key__name {
+  color: #273c85;
+  font-size: 0.9rem !important;
+}
+
+.ad-2 .ad2-body .ad2-feature .ad2-feature__value {
+  border-radius: 1rem;
+  -webkit-box-shadow: 0px 2px 3px 2px #ececec;
+          box-shadow: 0px 2px 3px 2px #ececec;
+  border: 1.5px solid #0000007a;
+  padding: 0.2rem 1em;
+  font-size: 0.78rem !important;
+  color: #555 !important;
+}
+
+.ad3-body * {
+  font-weight: 600;
+}
+
+.ad3-body .ad2-feature .ad2-feature__key .ad2-feature__key__icon {
+  font-size: 1.1rem;
+  color: #273c85;
+}
+
+.ad3-body .ad2-feature .ad2-feature__key .ad2-feature__key__name {
+  color: #383838;
+  font-size: 0.9rem !important;
+}
+
+.ad3-body .ad2-feature .ad2-feature__value {
+  padding: 0.2rem 1em;
+  font-size: 0.78rem !important;
+  color: #555 !important;
+}
+
+.ad-description * {
+  font-size: 0.94rem;
+}
+/*# sourceMappingURL=style.css.map */

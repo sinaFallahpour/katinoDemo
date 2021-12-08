@@ -1,0 +1,1102 @@
+﻿
+@{
+    ViewData["Title"] = "مدیریت آگهی ها";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    @*<link rel="~/stylesheet" href="vendors/dataTable/dataTables.min.css" type="text/css">*@
+    <link rel="~/stylesheet" href="~/vendors/dataTable/dataTables.min.css" type="text/css">
+    <link rel="stylesheet" href="/vendors/select2/css/select2.min.css" type="text/css">
+    <link href="~/cropper/css/cropper.css" rel="stylesheet" />
+    <link href="~/cropper/css/main.css" rel="stylesheet" />
+
+    <style>
+        #logo {
+            margin: auto;
+            max-width: 200px;
+            max-height: 200px;
+            border: 2px solid #f3f3f3
+        }
+
+        .checked {
+            color: orange;
+        }
+
+        #myTable {
+            width: 102% !important;
+        }
+
+        #label {
+            margin: 28% 28%;
+        }
+
+        #selectAll {
+            margin: 33% 13%;
+        }
+
+        .pagination > li {
+            margin-left: 1%;
+            cursor: pointer;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        div.form-control {
+            text-align: center;
+            background: #f1f1f1;
+            overflow: hidden;
+        }
+
+        .table td {
+            text-align: center;
+        }
+
+        .table-bordered thead td, .table-bordered thead th {
+            border-bottom-width: 2px;
+            text-align: center;
+        }
+
+        .table > tbody > tr > td {
+            vertical-align: middle;
+        }
+
+            .table > tbody > tr > td > img {
+                max-height: 100px;
+                max-width: 100px;
+            }
+
+        .selectedLi {
+            color: red;
+        }
+
+        label {
+            padding-top: 10px;
+            vertical-align: top;
+        }
+
+        #filtering {
+            vertical-align: text-bottom;
+        }
+
+        #ShowDetailsBtn {
+            border: 1px solid black;
+            background: #ddd;
+        }
+
+        #CreateTicketModalBtn {
+            border: 1px solid black;
+            background: #ddd;
+        }
+
+        .error {
+            animation-name: example;
+            animation-duration: 1.6s;
+        }
+
+        @@keyframes example {
+            0% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            10% {
+                border-color: white;
+                width: 100%;
+                height: 99%;
+            }
+
+            20% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            30% {
+                border-color: white;
+                width: 100%;
+                height: 99%;
+            }
+
+            40% {
+                border-color: red;
+                width: 102%;
+                height: 100%;
+            }
+
+            50% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            60% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+
+            70% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            80% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+
+            90% {
+                border-color: white;
+                width: 100%;
+                height: 100%;
+            }
+
+            100% {
+                border-color: red;
+                width: 102%;
+                height: 99%;
+            }
+        }
+    </style>
+
+
+}
+
+<button type="button" id="rejectResultBtn" class="btn btn-primary mr-2 mb-2 d-none" data-toggle="modal" data-target="#rejectResult">
+</button>
+<button type="button" id="ShowDetailsBtn" class="d-none" data-toggle="modal" data-target="#ShowDetails"></button>
+<button type="button" id="CreateAgentBtn" class="btn btn-success" data-toggle="modal" data-target="#CreateAgent" onclick="openCreateModal()">افزون نماینده</button>
+
+
+
+@*<button type="button" class="btn btn-light" id="CreateTicketModalBtn" onclick="sendTicket()" data-toggle="modal" data-target="#CreateTicket">
+        ارسال پیام جدید
+    </button>*@
+
+<hr />
+<table id="myTable" class="table table-striped table-bordered table-responsive">
+    <thead>
+        <tr>
+
+            <th style="max-width:60px !important">آواتار</th>
+            <th>نام ونام خانوادگی</th>
+            <th>شماره موبایل</th>
+            <th>   شماره ثابت</th>
+            <th> شهر  </th>
+            <th>   شماره شبا</th>
+            <th> آدرس</th>
+            <th>    شرایط راپذیرفت  </th>
+            <th>فعال</th>
+            <th>عملیات</th>
+
+
+
+        </tr>
+    </thead>
+    <tbody id="rewsOfTable">
+    </tbody>
+</table>
+
+<ul class="pagination" style=" direction: ltr; ">
+</ul>
+
+
+
+<!--CreateModal-->
+@*<div class="modal fade" tabindex="-1" role="dialog" id="ShowDetails">
+        <div class="modal-dialog modal-md" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> نمایش جزئیات</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true" id="ShowDetailsClose">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="ShowDetailsForm">
+
+                        <div class="form-row">
+                            <div class="form-group col-md-12  ">
+                                <img name="logo" class="" id="logo">
+                            </div>
+                            <div class="form-group col-md-4  ">
+                                <label for="fullName">نام و نام خانواگی </label>
+                                <div name="fullName" class="form-control  " id="fullName"></div>
+                            </div>
+                            <div class="form-group col-md-4  ">
+                                <label for="phoneNUmber">شماره تماس</label>
+                                <div name="text" class="form-control  " id="phoneNUmber"></div>
+
+                            </div>
+                            <div class="form-group col-md-4  ">
+                                <label for="email">ایمیل </label>
+                                <div type="text" name="email" class="form-control" id="email"></div>
+                            </div>
+                            <div class="form-group col-md-4  ">
+                                <label for="city">شهر </label>
+                                <div name="city" class="form-control  " id="city"></div>
+
+                            </div>
+                            <div class="form-group col-md-8  ">
+                                <label for="address">آدرس </label>
+                                <div type="text" name="address" class="form-control" id="address"></div>
+                            </div>
+                            <div class="form-group col-md-6  ">
+                                <label for="birthday">تاریخ تولد </label>
+                                <div name="birthday" class="form-control  " id="birthday"></div>
+
+                            </div>
+                            <div class="form-group col-md-6  ">
+                                <label for="isMarried">وضعیت تاهل </label>
+                                <div type="text" name="isMarried" class="form-control" id="isMarried"></div>
+                            </div>
+                            <div class="form-group col-md-3  ">
+                                <label for="military">وضعیت سربازی </label>
+                                <div name="military" class="form-control  " id="military"></div>
+
+                            </div>
+                            <div class="form-group col-md-4  ">
+                                <label for="exemptionExpirestionDate">تاریخ معافیت </label>
+                                <div name="exemptionExpirestionDate" class="form-control  " id="exemptionExpirestionDate"></div>
+
+                            </div>
+                            <div class="form-group col-md-5  ">
+                                <label for="exemptionExpirestionRecieveDate">تاریخ دریافت کارت پایان خدمت</label>
+                                <div type="text" name="exemptionExpirestionRecieveDate" class="form-control" id="exemptionExpirestionRecieveDate"></div>
+                            </div>
+
+                            <div class="form-group col-md-6  ">
+                                <label for="asignCount">تعداد رزومه های ارسالی </label>
+                                <div name="asignCount" class="form-control  " id="asignCount"></div>
+
+                            </div>
+                            <div class="form-group col-md-6  ">
+                                <label for="isActive">وضعیت کاربر </label>
+                                <div name="isActive" class="form-control  " id="isActive"></div>
+
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+
+
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="CreateAgent">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ایجاد نماینده</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="CreateGifCodeClose">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="CreateAgentForm">
+                    <input type="hidden" name="id" id="id" />
+
+                    <div class="form-row">
+                        <div class="form-group col-md-12 ">
+                            <label for="FullName"> نام و نام خانوادگی   </label>
+                            <input type="text" name="fullName" class="form-control " id="fullName" placeholder="" />
+                        </div>
+                        <div class="form-group col-md-12 ">
+                            <label for="PhoneNumber">   شماره موبایل </label>
+                            <input type="number" name="phoneNumber" class="form-control " id="phoneNumber" placeholder="09116784328" />
+                        </div>
+                        <div class="form-group col-md-12 ">
+                            <label for="StaticPhoneNumber">  شماره ثابت</label>
+                            <input type="number" name="staticPhoneNumber" class="form-control " id="staticPhoneNumber" placeholder="33323457" />
+                        </div>
+
+                        <div class="form-group col-md-12 ">
+                            <label for="ShebaNumber">  شماره شبا</label>
+                            <input type="text" name="shebaNumber" class="form-control " id="shebaNumber" placeholder="33323457" />
+                        </div>
+
+                        <div class="form-group col-md-12 ">
+                            <label for="province">  استان</label>
+                            <select required type="text" name="province" class="form-control " id="province">
+                                <option value=""></option>
+                                @foreach (var item in ViewBag.Provinces)
+                                {
+                                    <option value="@item">@item</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="form-group col-md-12 ">
+                            <label for="province">  شهر</label>
+                            <select required type="text" name="city" class="form-control " id="city">
+                            </select>
+                        </div>
+
+                        <div class="form-group col-md-12 ">
+                            <label for="address">   آدرس</label>
+                            <input type="text" name="address" class="form-control " id="address" placeholder="33323457" />
+                        </div>
+
+                        <div class="form-group col-md-12 ">
+                            <label for="iframe">   iframe گوگل مپ</label>
+                            <input type="text" name="iframe" class="form-control " id="iframe" />
+                        </div>
+
+                        <div class="form-group col-md-12 ">
+                            <label for="description">   توضیحات</label>
+                            <textarea type="text" name="description" class="form-control " id="description"></textarea>
+                        </div>
+
+                        <div class="form-group col-md-12 ">
+                            <label for="isActive">       فعال بودن    </label>
+                            <input type="checkbox" name="isActive" onclick="changeCheckBox('#isActive')" class="form-control " id="isActive" value="true" placeholder=" " />
+                        </div>
+
+                        <div class="form-group col-md-12 ">
+                            <label for="AcceptRule">    موافقت با قوانین و مقررات</label>
+                            <input type="checkbox" name="acceptRule" class="form-control" onclick="changeCheckBox('#acceptRule')" id="acceptRule" value="true" placeholder=" " />
+                        </div>
+                    </div>
+
+                    <button type="submit" id="SubmitCreateAgentBTN" class="btn btn-light-primary btn-block">ثبت</button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="Gallery" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+
+    <!-- Change class .modal-sm to change the size of the modal -->
+    <div class="modal-dialog modal-lg" role="document">
+
+
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title w-100" id="myModalLabel">گالری</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-center p-4">
+                <div class="row text-right">
+                    <div class="row" id="gallerySpace">
+                        @*<div class="row">
+                                <p style="background-color:darkgray;color:black;margin-right:10px" class="w-100">aa</p>
+                                <div class="col-lg-3">
+                                    <img src="/uploads/637271179167230940image.jpg" class="card-img-top" alt="...">
+                                    <button style="position:relative!important;bottom: 41px;" class="btn btn-primary col-lg-6 text-center">انتخاب</button>
+                                </div>
+                                <div class="col-lg-3 text-center text-lg-center mt-1">
+                                    <button id="newImg" class="btn btn-success"> <i class="fa fa-plus"></i> عکس جدید</button>
+                                </div>
+                            </div>*@
+                    </div>
+                    @*<div class="col-lg-3 text-center text-lg-center mt-1 position-relative">
+                            <img style="max-height:100%;max-width:100%" src="/uploads/637271179167230940image.jpg" />
+                            <span class="badge badge-danger position-absolute mtk-delete">X</span>
+                        </div>
+                        <div class="col-lg-3 text-center text-lg-center mt-1">
+                            <img style="max-height:100%;max-width:100%" src="/uploads/637271179167230940image.jpg" />
+                            <span class="badge badge-danger position-absolute mtk-delete">X</span>
+                        </div>*@
+                </div>
+                <input type="file" id="file-input" style="visibility:hidden" />
+                <input id="itemId" style="visibility:hidden" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" aria-label="Close" class="btn btn-danger">بستن</button>
+                <button id="newImg" class="btn btn-success">عکس جدید</button>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="file" id="file-input" style="visibility:hidden" />
+<div class="alert" role="alert"></div>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Crop the image</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="img-container">
+                    <img id="image" src="https://avatars0.githubusercontent.com/u/3456749">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="crop">Crop</button>
+                <button type="button" class="btn btn-danger" id="out">out</button>
+                <button type="button" class="btn btn-success" id="in">in</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="https://cdn.ckeditor.com/4.15.1/standard/ckeditor.js"></script>
+    <script src="~/vendors/dataTable/jquery.dataTables.min.js"></script>
+
+    <!-- Bootstrap 4 and responsive compatibility -->
+    <script src="~/vendors/dataTable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendors/dataTable/dataTables.responsive.min.js"></script>
+    <script src="/vendors/select2/js/select2.min.js"></script>
+    <script src="~/cropper/js/cropper.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" integrity="sha512-AA1Bzp5Q0K1KanKKmvN/4d3IRKVlv9PYgwFPvm32nPO6QS8yH1HO7LbgB1pgiOxPtfeg5zEn2ba64MUcqJx6CA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', function () {
+            //var avatar = document.getElementById('avatar');
+            var image = document.getElementById('image');
+            var input = document.getElementById('file-input');
+            var $progress = $('.progress');
+            var $progressBar = $('.progress-bar');
+            var $alert = $('.alert');
+            var $modal = $('#modal');
+            var cropper;
+            $('[data-toggle="tooltip"]').tooltip();
+
+            input.addEventListener('change', function (e) {
+                var files = e.target.files;
+                var done = function (url) {
+                    input.value = '';
+                    image.src = url;
+                    $alert.hide();
+                    $modal.modal('show');
+                };
+                var reader;
+                var file;
+                var url;
+
+                if (files && files.length > 0) {
+                    file = files[0];
+
+                    if (URL) {
+                        done(URL.createObjectURL(file));
+                    } else if (FileReader) {
+                        reader = new FileReader();
+                        reader.onload = function (e) {
+                            done(reader.result);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+                }
+            });
+
+            $modal.on('shown.bs.modal', function () {
+                cropper = new Cropper(image, {
+                    dragMode: 'move',
+                    aspectRatio: 1 / 1,
+                    //autoCropArea: 1,
+                    restore: false,
+                    guides: false,
+                    center: false,
+                    highlight: false,
+                    cropBoxMovable: false,
+                    cropBoxResizable: false,
+                    toggleDragModeOnDblclick: false,
+                    minCropBoxHeight: 100,
+                });
+            }).on('hidden.bs.modal', function () {
+                cropper.destroy();
+                cropper = null;
+            });
+
+            document.getElementById('out').addEventListener('click', function () {
+                cropper.zoom(-0.1);
+
+            });
+            document.getElementById('in').addEventListener('click', function () {
+                cropper.zoom(0.1);
+
+            });
+            document.getElementById('crop').addEventListener('click', function () {
+                var initialAvatarURL;
+                var canvas;
+
+                $modal.modal('hide');
+
+                if (cropper) {
+                    canvas = cropper.getCroppedCanvas({
+                        width: 600,
+                        height: 600,
+                    });
+                    $alert.removeClass('alert-success alert-warning');
+                    canvas.toBlob(function (blob) {
+                        var formData = new FormData();
+                        formData.append('image', blob, "image.jpg");
+                        loading()
+                        $.ajax({
+                            url: "/api/gallery/AddImage/",
+                            method: 'POST',
+                            data: formData,
+                            processData: false,
+                            contentType: false,
+                            success: function (data) {
+                                console.log(data);
+                                if (data.status != '0') {
+                                    AddImgToGallery(data);
+                                    //toast("1", "ok")
+                                    //$("#gallerySpace").empty();
+                                    //for (var i = 0; i < data.length; i++) {
+                                    //    $("#gallerySpace").append('<div class="col-lg-3 text-center text-lg-center mt-1 position-relative"><img style="max-height:100%;max-width:100%" src="' + data[i] + '" /><span data-url="' + data[i] + '" class="badge badge-danger deleteImg position-absolute mtk-delete">X</span></div>');
+                                    //}
+                                    //$("#gallerySpace").append('<div class="col-lg-3 text-center text-lg-center mt-1"><button id="newImg" class="btn btn-success">عکس جدید</button></div>');
+                                    //$("#gallerySpace").append('<input type="hidden" id="galleryId" value="' + modelId + '" />');
+                                }
+                                else {
+                                    swal("error");
+                                }
+                            }
+                        });
+                        Swal.close();
+                    });
+                }
+            });
+        });
+        function AddImgToGallery(image) {
+            $("Gallery").modal('toggle');
+            loading();
+            var formData = new FormData();
+            //let model = {
+            //    image,
+            //    id : $.cookie("companyId")
+            //}
+            formData.append("image", image);
+            formData.append("id", $.cookie("companyId"));
+            $.ajax({
+                type: "POST",
+                url: "/api/gallery/AddImgToGallery",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    //ax jadid to modal
+                    $("#gallerySpace").append('<div id="' + data.split('/')[3] + '" class="col-lg-3 text-center text-lg-center mt-1 position-relative"><img style="max-height:100%;max-width:100%" src="' + data + '" /><span data-url="' + data + '" class="badge badge-danger deleteImg position-absolute mtk-delete">X</span></div>');
+                    Swal.close();
+                }
+            });
+            $("Gallery").modal();
+        }
+        $('#gallerySpace').on('click', ".deleteImg", function () {
+            var button = $(this);
+            var url = button.attr("data-url");
+            var formData = new FormData();
+            formData.append("id", $.cookie("companyId"));
+            formData.append("url", url);
+            loading();
+            $.ajax({
+                type: "POST",
+                url: "/api/gallery/DeleteImgFromGallery",
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                dataType: 'json',
+                success: function (data) {
+                    console.log(data);
+                    if (data.status == '0') {
+                        swal.fire("", data.message, "error")
+                    } else {
+                        console.log("#" + url.split('/')[3]);
+                        var myobj = document.getElementById(url.split('/')[3]);
+                        myobj.remove();
+                    }
+                    Swal.close();
+                }
+            });
+        });
+    </script>
+    <script>
+
+        CKEDITOR.replace('description');
+        let baseUrl = "/api/Account";
+        let formUrl = "";
+
+
+        //on chnage event on check box
+        function changeCheckBox(element) {
+
+
+            if (!$(element).prop('checked') == true) {
+                $(element).removeAttr('checked');
+                $(element).val(false);
+            }
+            else {
+                $(element).attr('checked', 'checked');
+                $(element).val(true);
+            }
+        }
+
+        ///set value to checob in in edit item call
+        function setCheckBoxValue(value, element) {
+            if (value == "true") {
+                $(element).val(true)
+                $(element).attr('checked', 'checked')
+            } else {
+                $(element).val(false)
+                $(element).removeAttr('checked')
+            }
+        }
+
+        //is check box check or not
+        function getChecBoxValue(element) {
+            return $(element).prop('checked')
+        }
+
+
+        function sendTicket() {
+            $(".modal-backdrop").removeClass("d-none");
+        }
+        //seprator
+
+        function GetData(url, data, isAlreadyTable) {
+            if (isAlreadyTable == true) {
+                $('#myTable').DataTable().destroy();
+            }
+            var oTable = $('#myTable').DataTable({
+                responsive: true,
+                ordering: false,
+                processing: true,
+                paging: true,
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json"
+                },
+                ajax: {
+                    beforeSend: setAuthHeader,
+                    url: url,
+                    dataSrc: "",
+                    type: "GET",
+                    dataType: "json",
+                    cache: true,
+                    delay: 1000,
+                    data: data,
+
+
+                },
+                columns: [
+                    {
+                        data: 'logo',
+                        render: function (data, type, item) {
+                            return `<div class="form-group btn " style="max-width:55px"><img style="max-width:50px;max-height:100px;border-radius: 50%; position: absolute;left: -31%;" src='/Img/EmployeeAvatar/${data}'/></div>`
+                        }
+                    }
+                    ,
+                    {
+                        data: 'fullName',
+                        render: function (data, type, item) {
+                            return '<div class="form-group btn">' + data + '</div>'
+                        }
+                    }
+                    ,
+                    {
+                        data: 'phoneNUmber',
+                        render: function (data, type, item) {
+                            return '<div class="" style=" font-size: 103%;font-weight: bold;" > ' + data + '</div>'
+                        }
+                    },
+                    {
+                        data: 'staticPhoneNumber',
+                        render: function (data, type, item) {
+                            return '<div class="" style=" font-size: 103%;font-weight: bold;" > ' + data + '</div>'
+                        }
+                    },
+                    {
+                        data: 'city',
+                        render: function (data, type, item) {
+                            return '<div class="" style=" font-size: 103%;font-weight: bold;" > ' + data + '</div>'
+                        }
+                    },
+                    {
+                        data: 'shebaNumber',
+                        render: function (data, type, item) {
+                            return '<div class="" style=" font-size: 103%;font-weight: bold;" > ' + data + '</div>'
+                        }
+                    },
+                    {
+                        data: 'address',
+                        render: function (data, type, item) {
+                            return '<div class="" style=" font-size: 103%;font-weight: bold;" > ' + data + '</div>'
+                        }
+                    },
+                    {
+                        data: 'acceptRule',
+                        render: function (data, type, item) {
+                            if (data == null | data == "") data = "--"
+                            return '<div class="form-group btn">' + data + '</div>'
+                        }
+                    }
+                    ,
+                    {
+                        data: 'isActive',
+                        render: function (data, type, item) {
+                            console.log(item.isActive)
+                            var isChecked = item.isActive == true ? 'checked' : "";
+                            var isActive = item.isActive == true ? false : true;
+                            return `<label class="switch">
+                                                            <input type="checkbox" data-id=${item.id} onclick="BlockUnblock(this)" ${isChecked}>
+                                                            <span class="slider round"></span>
+                                                        </label>`;
+                        }
+                    }
+                    , {
+
+                        data: "id",
+                        render: function (data, type, item) {
+                            let el = `
+                                                <button onclick="EditItem(this)" class="form-group btn btn-primary d-block" data-content='${item.content}' data-subject='${item.subject} '
+                                                    data-id="${item.id}"
+                                                    data-province="${item.province}"
+
+                                                    data-phoneNUmber="${item.phoneNUmber}"
+                                                    data-shebaNumber="${item.shebaNumber}"
+                                                    data-staticPhoneNumber="${item.staticPhoneNumber}"
+                                                    data-fullName="${item.fullName}"
+                                                    data-asignCount="${item.asignCount}"
+                                                    data-address="${item.address}"
+                                                    data-city="${item.city}"
+                                                    data-email="${item.email}"
+                                                    data-isActive="${item.isActive}"
+                                                    data-logo="${item.logo}"
+                                                    data-isMarried="${item.isMarried}"
+                                                    data-acceptRule="${item.acceptRule}"
+                                                    data-exemptionExpirestionDate="${item.exemptionExpirestionDate}"
+                                                    data-exemptionExpirestionRecieveDate="${item.exemptionExpirestionRecieveDate}"
+
+                                                    >ویرایش
+                                                </button>
+<button class="btn btn-info showGallery" data-item-id="${item.id}">گالری</button>`;
+                            return el;
+
+                        }
+                    }
+                ],
+            });
+        };
+        $("#myTable").on('click', ".showGallery", function () {
+            var button = $(this);
+            var model = {
+                id: button.attr("data-item-id")
+            };
+            loading()
+            $.cookie('companyId', model.id, { expires: 1, path: '/' });
+            $.ajax({
+                url: "/api/gallery/GetCompanyImages/",
+                method: "GET",
+                dataType: 'json',
+                contentType: "application/json; charset=utf-8",
+                data: model,
+                success: function (data) {
+                    $("#gallerySpace").empty();
+                    for (var i = 0; i < data.length; i++) {
+                        $("#gallerySpace").append('<div id="' + data[i].split('/')[3] + '" class="col-lg-3 text-center text-lg-center mt-1 position-relative"><img style="max-height:100%;max-width:100%" src="' + data[i] + '" /><span data-url="' + data[i] + '" class="badge badge-danger deleteImg position-absolute mtk-delete">X</span></div>');
+                    }
+
+                    $("#Gallery").modal();
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR);
+                    console.log(textStatus);
+                    alert(errorThrown);
+                    console.log(errorThrown);
+                }
+            });
+            Swal.close();
+        });
+        $('#newImg').on('click', function () {
+            $('#file-input').trigger('click');
+        });
+        function sepaisMarried(Number) {
+            Number += '';
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            Number = Number.replace(',', ''); Number = Number.replace(',', ''); Number = Number.replace(',', '');
+            x = Number.split('.');
+            y = x[0];
+            z = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
+            while (rgx.test(y))
+                y = y.replace(rgx, '$1' + ',' + '$2');
+            return y + z;
+        }
+
+        $(document).ready(async function () {
+
+            $("#notifCount").addClass("d-none");
+            //loadData
+            GetData('/api/Account/GetAllAgentForAdmin', {}, false);
+
+        });
+
+        function showContent(e) {
+            $("#modalParagraph").html($(e).val());
+            $("#rejectResultBtn").click();
+        }
+
+        //function changeCreateStatus(e) {
+        //    var statusId = $(e).attr("data-status");
+        //    $("#adverCreateStatusInModal").val(statusId);
+        //    adverId = $(e).attr("data-id");
+        //    $("#ShowDetailsBtn").click();
+        //}
+
+        function changeValue(val) {
+            if (val == "" || val == null || val == "null") {
+                return "----";
+            }
+            return val;
+        }
+
+        function userActivation(active) {
+            if (active == "true") return "فعال";
+            else return "غیر فعال";
+        }
+        function sendTicket(id) {
+            $("#userId").val(id);
+            $("#CreateTicket").modal("toggle");
+        }
+
+
+        function clear() {
+            $('.CreateAgentForm').trigger("reset");
+            $("#isActive").val(false)
+            $("#isActive").removeAttr('checked')
+
+            $("#acceptRule").val(false)
+            $("#acceptRule").removeAttr('checked')
+        }
+
+        function openCreateModal() {
+            clear()
+            formUrl = baseUrl + "/CreateAgent"
+        }
+
+        $(".CreateAgentForm").submit(function (e) {
+            $("#content").removeClass("error");
+            $("#subject").removeClass("error");
+            $("#file").removeClass("error");
+
+            e.preventDefault();
+            var formData = new FormData(this);
+            formData.append('acceptRule', getChecBoxValue('#acceptRule'))
+            formData.append('isActive', getChecBoxValue('#isActive'))
+
+            formData.delete("description");
+            var description = CKEDITOR.instances['description'].getData();
+            formData.append("description", description);
+
+
+
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Post",
+                url: formUrl,
+                data: formData,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.successCode) {
+                        toastr.success(data.message);
+                        //$("#CreateAgentForm").modal('hide');
+                        GetData('/api/Account/GetAllAgentForAdmin', {}, true);
+                        $('#CreateAgent').modal('toggle')
+
+
+                        clear()
+                        //$("#CreateTicketClose").click();
+                        //$(".modal-backdrop").addClass("d-none");
+
+                    } else {
+                        toastr.error(data.message);
+                    }
+
+                    window.location.reload()
+
+                },
+                error: function (data) {
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+                    })
+                }
+            });
+
+        });
+
+        function EditItem(e) {
+            const phoneNUmber = changeValue($(e).attr("data-phoneNUmber"));
+            const shebaNumber = changeValue($(e).attr("data-shebaNumber"));
+            const staticPhoneNumber = changeValue($(e).attr("data-staticPhoneNumber"));
+            const fullName = changeValue($(e).attr("data-fullName"));
+            const email = changeValue($(e).attr("data-email"));
+            const asignCount = changeValue($(e).attr("data-asignCount"));
+            const address = changeValue($(e).attr("data-address"));
+            const city = changeValue($(e).attr("data-city"));
+            const isActive = changeValue($(e).attr("data-isActive"));
+            const logo = $(e).attr("data-logo");
+            const isMarried = $(e).attr("data-isMarried");
+            const acceptRule = $(e).attr("data-acceptRule");
+            const id = $(e).attr("data-id");
+            let value = getAgentDesc(id);
+            const exemptionExpirestionDate = changeValue($(e).attr("data-exemptionExpirestionDate"));
+            const exemptionExpirestionRecieveDate = changeValue($(e).attr("data-exemptionExpirestionRecieveDate"));
+            const military = changeValue($(e).attr("data-military"));
+            const birthday = changeValue($(e).attr("data-birthday"));
+
+            $("#id").val(id);
+            $("#phoneNumber").val(phoneNUmber);
+            $("#shebaNumber").val(shebaNumber);
+            $("#staticPhoneNumber").val(staticPhoneNumber);
+            $("#fullName").val(fullName);
+            $("#email").val(email);
+            $("#asignCount").val(asignCount);
+            $("#address").val(address);
+            $('#province').val($(e).attr("data-province"));
+            getCitiesForEdit($(e).attr("data-province"), city);
+            formUrl = baseUrl + "/EditAgent"
+
+            setCheckBoxValue(isActive, '#isActive')
+            setCheckBoxValue(acceptRule, '#acceptRule')
+
+            $("#logo").attr("src", "/Img/EmployeeAvatar/" + logo);
+            $("#CreateAgent").modal("toggle");
+        }
+
+
+        function BlockUnblock(e) {
+            console.log(e);
+            var id = $(e).attr("data-id");
+            var isActive = false;
+            let url = "";
+            if ($(e).prop('checked') == true) {
+                isActive = true;
+            }
+            if (isActive) {
+                url = "/api/Account/UnBlockUser?userId=" + id;
+                block(url);
+            } else {
+                url = "/api/Account/BlockUser?userId=" + id;
+
+                swal({
+                    title: "آیا مطمئن هستید؟",
+                    text: "با بلاک کردن کابر دسترسی را کاملا از بین میبرید!",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: true,
+                })
+                    .then((willDelete) => {
+                        if (willDelete) {
+                            block(url);
+
+                        } else {
+                            $(e).prop('checked', true); // Checks it
+
+                        }
+                    });
+            }
+        }
+
+
+        function block(url) {
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "POST",
+                url: url,
+                contentType: 'application/json',
+                data: {},
+
+                success: function (data) {
+                    if (data.statusCode == '200') {
+                        toastr.success(data.message);
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (data) {
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+
+                    })
+                }
+            });
+        }
+
+            $("#province").change(function () {
+            var url = '@Url.Action("GetProvinceCities", "Account")';
+                 var ds = "#province";
+            $.getJSON(url, { provinceName : $(ds).val() }, function (data) {
+                var items = '';
+                $("#city").empty();
+                $.each(data, function (i, row) {
+                    items += "<option value='" + row + "'>" + row + "</option>";
+                });
+                $("#city").html(items);
+            });
+            });
+        function getCitiesForEdit(province,city) {
+              var url = '@Url.Action("GetProvinceCities", "Account")';
+            $.getJSON(url, { provinceName: province }, function (data) {
+                var items = '';
+                $("#city").empty();
+                $.each(data, function (i, row) {
+                    items += "<option value='" + row + "'>" + row + "</option>";
+                });
+                $("#city").html(items);
+                $("#city").val(city);
+            });
+        }
+        function getAgentDesc(id) {
+            let data = {
+                desc : "",
+                iframe :""
+            };
+            let model = {
+                id
+            }
+            $.ajax({
+                url: '/Admin/GetAgentById',
+                method: 'POST',
+                data: model,
+                success: function (result) {
+                    CKEDITOR.instances['description'].setData(result.description);
+                    $('#iframe').val(result.iframe);
+                }
+            })
+            return data;
+        }
+    </script>
+
+}

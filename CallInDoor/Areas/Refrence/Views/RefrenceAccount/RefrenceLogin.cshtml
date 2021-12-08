@@ -1,0 +1,303 @@
+﻿<!-- end::preloader -->
+
+
+
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>کاتینو - میزکار نماینده</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/assets/media/image/favicon.png" />
+
+    <!-- Plugin styles -->
+    <link rel="stylesheet" href="~/vendors/bundle.css" type="text/css">
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="~/assets/css/app.min.css" type="text/css">
+    <style>
+        .exit {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .formLogin, .formVerify {
+            padding: 5%;
+            text-align: center;
+            align-items: center;
+            width: 40%;
+            margin: auto;
+            background: #fff;
+            border-radius: 5%;
+        }
+
+        .a-link {
+            margin-top: -7%;
+            margin-right: 47%;
+            cursor: pointer
+        }
+
+        #title {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .divVerify {
+            display: inline-block !important;
+        }
+
+        .timer {
+            width: 50%;
+            margin: auto;
+            padding: 5%;
+            text-align: center;
+            align-items: center;
+        }
+
+        h1 {
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- begin::preloader-->
+    <div class="preloader">
+        <div class="preloader-icon"></div>
+    </div>
+    <!-- end::preloader -->
+
+    <div class="form-wrapper">
+
+        <!-- logo -->
+
+        <div class="form-wrapper bo">
+
+            <!-- logo -->
+            <div id="logo">
+                <img class="logo" src="~/assets/media/image/logo-F.png.png" alt="image">
+            </div>
+            <!-- ./ logo -->
+
+            <h5 id="title" class="text-center">شماره تلفن خود را وارد نمایید</h5>
+
+            <!-- form -->
+            <form class="formLogin d-block">
+
+                <input type="hidden" name="Role" id="role" value="Refrence" />
+                <div class="form-group d-flex align-items-center">
+
+                    <input type="text" name="phoneNumber" id="phoneNumber" class="form-control" placeholder="شماره تلفن" required autofocus>
+                </div>
+                <button type="button" id="login" class="btn btn-primary btn-block">دریافت کد</button>
+                <hr>
+            </form>
+
+            <form class="formVerify d-none">
+                <div class="form-group d-flex align-items-center divVerify w-100">
+                    <input type="text" name="phoneNumber" id="verifyPhoneNumber" class="form-control " placeholder="شماره تلفن" required readonly>
+
+
+                    <input type="text" name="verifyCode" id="verifyCode" class="form-control " placeholder="کد 6 رقمی" required autofocus>
+
+                </div>
+                <div class="row text-center timer">
+                    <h1 id="second">00</h1>
+                    <h1>:</h1>
+                    <h1 id="minute">02</h1>
+
+
+                </div>
+                <button type="button" id="verify" class="btn btn-primary btn-block">ورود</button>
+                <button type="button" id="sendAgain" class="btn btn-primary d-none mt-2">ارسال مجدد</button>
+                <hr>
+                @*<div class="exit">
+                        <p class="btn btn-sm btn-outline-light ml-1 m-auto" onclick="window.close()">خروج</p>
+                    </div>*@
+
+            </form>
+            <!-- ./ form -->
+            @*<a class="btn btn-lg btn-light-warning a-link" href="/Refrence/Register">ایجاد حساب</a>*@
+
+        </div>
+
+
+    </div>
+
+    <!-- Plugin scripts -->
+    <script src="~/vendors/bundle.js"></script>
+
+    <!-- App scripts -->
+    <script src="~/assets/js/app.min.js"></script>
+
+    <script>
+
+
+
+        async function getUserRole() {
+            let finalResult = await $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Get",
+                url: '/api/Account/GetUserRole',
+                contentType: 'application/json',
+                data: {},
+                success: function (data) {
+                    return data.resul;
+                },
+                error: function (data) {
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        toastr.error(elem);
+
+                    })
+                }
+            });
+            return finalResult;
+        }
+
+
+
+        $('#login').click(function (e) {
+            localStorage.removeItem("token");
+
+            e.preventDefault();
+            $.ajax({
+                method: "POST",
+                url: '/api/Account/Login',
+                contentType: 'application/json',
+                data: JSON.stringify(serializeForm(document.querySelector('.formLogin'))),
+                //cache: false,
+                //contentType: false,
+                //processData: false,
+                success: function (data) {
+                    if (data.statusCode == '200') {
+                        toastr.success(data.message);
+                        $(".formLogin").removeClass("d-block").addClass("d-none");
+                        $("#verifyPhoneNumber").val(data.resul.phoneNumber);
+                        $("#title").html("کد 6 رقمی را وارد کنید");
+                        $(".formVerify").removeClass("d-none").addClass("d-block");
+                        setTimer();
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (data) {
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        toastr.error(elem);
+
+                    })
+                }
+            });
+        });
+        $('#verify').click(function (e) {
+            e.preventDefault();
+            $.ajax({
+                method: "POST",
+                url: '/api/Account/VerifyCode',
+                contentType: 'application/json',
+                data: JSON.stringify(serializeForm(document.querySelector('.formVerify'))),
+                success: function (data) {
+                    if (data.statusCode == '200') {
+
+
+                        asyncLocalStorage.setItem('token', data.resul.token).then(function () {
+                            return asyncLocalStorage.getItem('token');
+                        }).then(function (value) {
+                            getUserRole().then((value) => {
+                                window.location.href = '/Refrence/Dashboard'
+                                return
+                                if (value.resul == 'Refrence') {
+                                    window.location.href = '/Refrence/Dashboard'
+                                }
+                                else {
+                                    toastr.error('عدم دسترسی');
+                                    location.reload();
+
+                                }
+                            });
+                        });
+                        toastr.success(data.message);
+
+
+                    } else {
+                        toastr.error(data.message);
+                    }
+                },
+                error: function (data) {
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        toastr.error(elem);
+
+                    })
+                }
+            });
+        });
+
+        $("#sendAgain").click(function () {
+            $(".formVerify").removeClass("d-block").addClass("d-none");
+            $("#title").html("شماره تلفن خودرا وارد کنید");
+            $(".formLogin").removeClass("d-none").addClass("d-block");
+            $("#second").text("00");
+            $("#minute").text("02");
+            $(".timer").removeClass("d-none");
+            $("#sendAgain").addClass("d-none");
+            $("#verify").removeClass("d-none");
+
+
+        });
+        //CountDown
+
+        function setTimer() {
+            var timer_interval = setInterval(function () {
+                seconds = new Number($("#second").text());
+                minutes = new Number($("#minute").text());
+
+                if (seconds == 0 && minutes != 0) {
+                    minutes = minutes - 1;
+                    seconds = 59;
+                }
+                else if (seconds <= 59 && seconds != 0) {
+                    seconds = seconds - 1;
+                }
+                else if (seconds == 0 && seconds == 0) {
+                    clearInterval(timer_interval);
+                    $(".timer").addClass("d-none");
+                    $("#sendAgain").removeClass("d-none");
+                    $("#verify").addClass("d-none");
+
+
+                }
+                else {
+
+                    clearInterval(timer_interval);
+                }
+                if (seconds < 10) {
+                    $("#second").text("0" + seconds);
+
+                }
+                else {
+                    $("#second").text(seconds);
+
+                }
+                if (minutes < 10) {
+                    $("#minute").text("0" + minutes);
+
+                }
+                else {
+                    $("#minute").text(minutes);
+
+                }
+            }, 1000);
+
+
+        }
+    </script>
+</body>
+
+</html>

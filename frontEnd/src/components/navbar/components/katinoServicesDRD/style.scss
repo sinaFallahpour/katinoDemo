@@ -1,0 +1,181 @@
+.katino-services-dropdown {
+  position: relative;
+
+  &:hover {
+    // & > #ksd__list.list-level-0 {
+    //   transition: 0.3s;
+    //   opacity: 1 !important;
+    //   visibility: visible !important;
+    // }
+  }
+
+  .ksd__btn {
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .list-level-0 {
+    z-index: 1000 !important;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    top: 40px;
+    transition: 0.5s;
+    right: 0;
+
+    .inner {
+      border: 1px solid #e0e0e0;
+      transition: 0.5s;
+      background-color: #fff;
+      border-radius: 0.5rem;
+      position: relative;
+      width: 20vw;
+      min-width: 250px;
+      overflow-y: scroll;
+
+      .list-level-0__ul {
+        position: relative;
+
+        .list-level-0__ul__li {
+          position: relative;
+          cursor: pointer;
+          z-index: 1000;
+
+          &:hover {
+            background-color: #ccc !important;
+            > a {
+              color: #fff !important;
+            }
+            > i {
+              color: #fff !important;
+            }
+            .list-level-1 {
+              transition: 0.3s;
+              visibility: visible !important;
+              opacity: 1 !important;
+            }
+          }
+
+          > a {
+            color: #444;
+            font-weight: 500;
+          }
+          > i {
+            color: #444;
+            font-weight: 500;
+          }
+
+          .list-level-1 {
+            transition: 0.3s;
+            border: 1px solid #e0e0e0;
+            border-radius: 0.5rem;
+
+            position: absolute;
+            top: 0rem;
+            right: calc(20vw - 2px);
+            width: 20vw;
+            background-color: #fff;
+            visibility: hidden;
+            opacity: 0 !important;
+
+            .list-level-1__ul {
+              .list-level-1__ul__li {
+                position: relative;
+                cursor: pointer;
+
+                &:hover {
+                  background-color: #ccc !important;
+                  > a {
+                    color: #fff !important;
+                  }
+                  > i {
+                    color: #fff !important;
+                  }
+                  .list-level-2 {
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                  }
+                }
+
+                > a {
+                  color: #444;
+                  font-weight: 500;
+                }
+                > i {
+                  color: #444;
+                  font-weight: 500;
+                }
+                .list-level-2 {
+                  border: 1px solid #e0e0e0;
+                  border-radius: 0.5rem;
+
+                  background-color: #fff;
+                  position: absolute;
+                  top: 0;
+                  width: 40vw;
+                  right: calc(20vw - 12px);
+                  visibility: hidden;
+                  opacity: 0;
+
+                  .list-level-2__ul {
+                    .list-level-2__ul__li {
+                      cursor: pointer;
+                      &:hover {
+                        background-color: #ccc !important;
+                        a {
+                          color: #fff !important;
+                        }
+                        i {
+                          color: #fff !important;
+                        }
+                      }
+
+                      a {
+                        color: #444;
+                        font-weight: 500;
+                      }
+                      i {
+                        color: #444;
+                        font-weight: 500;
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+
+.show-ksd__list{
+  &#ksd__list.list-level-0{
+    transition: 0.3s;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+}
+.show-categories {
+  opacity: 1 !important;
+  visibility: visible !important;
+  max-height: 400px !important;
+  z-index: 20 !important;
+  transition: 0.5s;
+}
+
+.categories-dropdown {
+  opacity: 0;
+  width: calc(20vw - 10px);
+  visibility: hidden;
+  max-height: 0;
+  position: absolute;
+  top: 2.9rem;
+  right: 0;
+  background-color: #fafafa;
+  border: 1px solid #ebebeb;
+  border-radius: 3px;
+  transition: 0.5s;
+}

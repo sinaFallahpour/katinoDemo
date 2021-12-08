@@ -1,0 +1,189 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>aspnet-Katino-AC98DDE9-0B90-4BE2-9915-4262BBF9828D</UserSecretsId>
+    <LangVersion>preview</LangVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove=".config\**" />
+    <Compile Remove="Data\**" />
+    <Content Remove=".config\**" />
+    <Content Remove="Data\**" />
+    <EmbeddedResource Remove=".config\**" />
+    <EmbeddedResource Remove="Data\**" />
+    <None Remove=".config\**" />
+    <None Remove="Data\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\assets\js\app-refrence.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove=".gitignore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="ElmahCore" Version="2.0.5" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.7.13" />
+    <PackageReference Include="Hangfire.Core" Version="1.7.13" />
+    <PackageReference Include="Hangfire.MemoryStorage" Version="1.7.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="3.1.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.6" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.1.0-preview1.19506.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.5" />
+    <PackageReference Include="NETCore.MailKit" Version="2.0.3" />
+    <PackageReference Include="Parbad" Version="3.5.1" />
+    <PackageReference Include="parbad.AspNetCore" Version="1.0.6" />
+    <PackageReference Include="parbad.Storage.Cache" Version="1.0.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Service\Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Controllers\AccountController.en-US.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Controllers\AccountController.fa-IR.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Areas\Admin\Data\" />
+    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="Areas\Refrence\Data\" />
+    <Folder Include="Areas\Refrence\Models\" />
+    <Folder Include="Properties\PublishProfiles\" />
+    <Folder Include="wwwroot\Img\EmployeeAvatar\" />
+    <Folder Include="wwwroot\Img\Blog\" />
+    <Folder Include="wwwroot\Img\Advers\" />
+    <Folder Include="wwwroot\Img\Gallery\" />
+    <Folder Include="wwwroot\Img\Ticket\" />
+    <Folder Include="wwwroot\Img\Setting\" />
+    <Folder Include="wwwroot\uploads\" />
+    <Folder Include="wwwroot\PDF\KatinoResomePDF\" />
+    <Folder Include="wwwroot\PDF\ResomePDF\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
+    <None Include="wwwroot\assets\Cal\fa.js" />
+    <None Include="wwwroot\assets\Cal\fullcalendar.js" />
+    <None Include="wwwroot\assets\Cal\moment-jalaali.js" />
+    <None Include="wwwroot\assets\Cal\moment.js" />
+    <None Include="wwwroot\assets\Cal\moment.min.js" />
+    <None Include="wwwroot\assets\Cal\persian-date.min.js" />
+    <None Include="wwwroot\assets\Datepiker\persian-date.js" />
+    <None Include="wwwroot\assets\Datepiker\persian-datepicker.js" />
+    <None Include="wwwroot\assets\fonts\fonts\IRANSansWeb.woff2" />
+    <None Include="wwwroot\assets\fonts\fonts\IRANSansWeb_Bold.woff2" />
+    <None Include="wwwroot\assets\fonts\fonts\IRANSansWeb_Light.woff2" />
+    <None Include="wwwroot\assets\fonts\fonts\IRANSansWeb_Medium.woff2" />
+    <None Include="wwwroot\assets\fonts\fonts\IRANSansWeb_UltraLight.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-Black.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-BlackItalic.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-Bold.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-BoldItalic.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-ExtraBold.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-ExtraBoldItalic.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-ExtraLight-BETA.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-ExtraLightItalic-BETA.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-Italic.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-Light-BETA.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-LightItalic-BETA.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-Medium.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-MediumItalic.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-Regular.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-SemiBold.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-SemiBoldItalic.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-Thin-BETA.woff2" />
+    <None Include="wwwroot\assets\fonts\inter-ui\Inter-ThinItalic-BETA.woff2" />
+    <None Include="wwwroot\assets\icons\font-awesome\fonts\fontawesome-webfont3e6e.svg" />
+    <None Include="wwwroot\assets\icons\font-awesome\fonts\fontawesome-webfont3e6e.woff2" />
+    <None Include="wwwroot\assets\icons\themify\fonts\themify9f24.svg" />
+    <None Include="wwwroot\assets\icons\weather\fonts\pe-icon-set-weathere60d.svg" />
+    <None Include="wwwroot\assets\js\app-refrence.min.js" />
+    <None Include="wwwroot\assets\js\app.min.js" />
+    <None Include="wwwroot\assets\js\custom.js" />
+    <None Include="wwwroot\assets\js\examples\charts\apex-irregular-data-series.js" />
+    <None Include="wwwroot\assets\js\examples\charts\apex.js" />
+    <None Include="wwwroot\assets\js\examples\charts\chartjs.js" />
+    <None Include="wwwroot\assets\js\examples\charts\justgage.js" />
+    <None Include="wwwroot\assets\js\examples\charts\morsis.js" />
+    <None Include="wwwroot\assets\js\examples\charts\peity.js" />
+    <None Include="wwwroot\assets\js\examples\clockpicker.js" />
+    <None Include="wwwroot\assets\js\examples\colorpicker.js" />
+    <None Include="wwwroot\assets\js\examples\dashboard.js" />
+    <None Include="wwwroot\assets\js\examples\datatable.js" />
+    <None Include="wwwroot\assets\js\examples\datepicker.js" />
+    <None Include="wwwroot\assets\js\examples\form-wizard.js" />
+    <None Include="wwwroot\assets\js\examples\fullcalendar.js" />
+    <None Include="wwwroot\assets\js\examples\input-mask.js" />
+    <None Include="wwwroot\assets\js\examples\lightbox.js" />
+    <None Include="wwwroot\assets\js\examples\range-slider.js" />
+    <None Include="wwwroot\assets\js\examples\select2.js" />
+    <None Include="wwwroot\assets\js\examples\slick.js" />
+    <None Include="wwwroot\assets\js\examples\sweet-alert.js" />
+    <None Include="wwwroot\assets\js\examples\tagsinput.js" />
+    <None Include="wwwroot\assets\js\examples\toast.js" />
+    <None Include="wwwroot\assets\js\examples\tour.js" />
+    <None Include="wwwroot\assets\js\examples\vmap.js" />
+    <None Include="wwwroot\assets\media\svg\mean_at_work.svg" />
+    <None Include="wwwroot\assets\media\svg\undraw_onboarding_o8mv.svg" />
+    <None Include="wwwroot\cropper\js\cropper.js" />
+    <None Include="wwwroot\cropper\js\main.js" />
+    <None Include="wwwroot\vendors\bundle.js" />
+    <None Include="wwwroot\vendors\charts\apex\apexcharts.min.js" />
+    <None Include="wwwroot\vendors\charts\chartjs\chart.min.js" />
+    <None Include="wwwroot\vendors\charts\justgage\justgage.js" />
+    <None Include="wwwroot\vendors\charts\justgage\raphael-2.1.4.min.js" />
+    <None Include="wwwroot\vendors\charts\morsis\morris.min.js" />
+    <None Include="wwwroot\vendors\charts\morsis\raphael-2.1.4.min.js" />
+    <None Include="wwwroot\vendors\charts\peity\jquery.peity.min.js" />
+    <None Include="wwwroot\vendors\circle-progress\circle-progress.min.js" />
+    <None Include="wwwroot\vendors\clockpicker\bootstrap-clockpicker.min.js" />
+    <None Include="wwwroot\vendors\colorpicker\js\bootstrap-colorpicker.min.js" />
+    <None Include="wwwroot\vendors\dataTable\dataTables.bootstrap4.min.js" />
+    <None Include="wwwroot\vendors\dataTable\dataTables.responsive.min.js" />
+    <None Include="wwwroot\vendors\dataTable\jquery.dataTables.min.js" />
+    <None Include="wwwroot\vendors\datepicker\bootstrap-datepicker.fa.js" />
+    <None Include="wwwroot\vendors\datepicker\bootstrap-datepicker.fa.min.js" />
+    <None Include="wwwroot\vendors\datepicker\daterangepicker.js" />
+    <None Include="wwwroot\vendors\dropzone\dropzone.js" />
+    <None Include="wwwroot\vendors\enjoyhint\enjoyhint.min.js" />
+    <None Include="wwwroot\vendors\form-wizard\jquery.steps.min.js" />
+    <None Include="wwwroot\vendors\fullcalendar\fullcalendar.min.js" />
+    <None Include="wwwroot\vendors\fullcalendar\moment.min.js" />
+    <None Include="wwwroot\vendors\input-mask\jquery.mask.js" />
+    <None Include="wwwroot\vendors\lightbox\jquery.magnific-popup.min.js" />
+    <None Include="wwwroot\vendors\nestable\jquery.nestable.js" />
+    <None Include="wwwroot\vendors\prism\prism.js" />
+    <None Include="wwwroot\vendors\quill\quill.js" />
+    <None Include="wwwroot\vendors\range-slider\js\ion.rangeSlider.min.js" />
+    <None Include="wwwroot\vendors\select2\js\select2.min.js" />
+    <None Include="wwwroot\vendors\slick\fonts\slick.svg" />
+    <None Include="wwwroot\vendors\slick\slick.min.js" />
+    <None Include="wwwroot\vendors\tagsinput\bootstrap-tagsinput.js" />
+    <None Include="wwwroot\vendors\vmap\jquery.vmap.min.js" />
+    <None Include="wwwroot\vendors\vmap\maps\jquery.vmap.canada.js" />
+    <None Include="wwwroot\vendors\vmap\maps\jquery.vmap.usa.js" />
+    <None Include="wwwroot\vendors\vmap\maps\jquery.vmap.world.js" />
+  </ItemGroup>
+
+</Project>

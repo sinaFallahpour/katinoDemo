@@ -1,0 +1,712 @@
+﻿<!doctype html>
+<html lang="en">
+@using Domain
+@inject DataContext _context;
+@{
+
+    var userName = _context.Users.FirstOrDefault(x => x.Role == Domain.Utilities.PublicHelper.ADMINROLE).UserName;
+    var hasData = _context.StorySizeNotifications.Where(x => x.IsSeen == false).Any();
+    var reportsHasData = _context.ReportAdverts.Where(x => x.IsSeen == false && x.Status == Domain.DTO.Response.ReportAdvertStatus.Saved).Any();
+
+}
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>کاتینو - میزکار ادمین</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="~/assets/media/image/favicon.png" />
+
+    <!-- Plugin styles -->
+    <link rel="stylesheet" href="~/vendors/bundle.css" type="text/css">
+
+    <!-- Datepicker -->
+    <link rel="stylesheet" href="~/vendors/datepicker/daterangepicker.css">
+    <link rel="stylesheet" href="~/assets/Datepiker/persian-datepicker.css">
+
+
+    <!-- Fullcalendar -->
+    <link rel="stylesheet" href="~/vendors/fullcalendar/fullcalendar.min.css" type="text/css">
+    <link href='assets/Cal/fullcalendar.css' rel='stylesheet' />
+    @*<link href='assets/Cal/fullcalendar.print.css' rel='stylesheet' media='print' />*@
+    <link href="~/assets/Cal/fullcalendar.css" rel="stylesheet" />
+    <!-- Vmap -->
+    <link rel="stylesheet" href="~/vendors/vmap/jqvmap.min.css">
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="~/assets/css/app.min.css" type="text/css">
+    <link href="~/assets/css/ToggleSwitch.css" rel="stylesheet" />
+    <style>
+        #notifCount {
+            position: absolute;
+            left: 5%;
+            bottom: 16%;
+            cursor: pointer;
+        }
+
+        #loadingDiv {
+            width: 10000px;
+            height: 1500px;
+            background: rgba(0,0,0,0.6);
+            /* opacity: 0.4;*/
+            z-index: 1100;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding-left: 50%;
+            padding-top: 50%;
+        }
+
+        #imgLoading {
+            position: fixed;
+            max-height: 23%;
+            max-width: 19%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%)
+        }
+    </style>
+    @RenderSection("styles", required: false)
+
+</head>
+<body>
+    <div id="loadingDiv" class="d-none">
+        <img id="imgLoading" src="~/assets/media/image/Loading.gif" />
+
+    </div>
+    <input hidden id="adminUsername" value="@userName" />
+    <!-- begin::preloader-->
+    <div class="preloader">
+        <div class="preloader-icon"></div>
+    </div>
+    <!-- end::preloader -->
+    <!-- begin::header -->
+    <div class="header">
+
+        <div>
+            <ul class="navbar-nav">
+                <li class="nav-item navigation-toggler">
+                    <a href="javascript:;" class="nav-link" title="Hide navigation">
+                        <i data-feather="arrow-left"></i>
+                    </a>
+                </li>
+                <li class="nav-item navigation-toggler mobile-toggler">
+                    <a href="javascript:;" class="nav-link" title="Show navigation">
+                        <i data-feather="menu"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+
+    </div>
+    <!-- end::header -->
+    <!-- begin::main -->
+    <div id="main">
+
+        <!-- begin::navigation -->
+        <div class="navigation">
+
+            <div class="navigation-menu-tab">
+                <div>
+                </div>
+                @*<div class="flex-grow-1">
+                        <ul>
+                            <li>
+                                <a class="active" href="~/#" data-toggle="tooltip" data-placement="right" title="داشبردها"
+                                   data-nav-target="#dashboards">
+                                    <i data-feather="bar-chart-2"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="~/#" data-toggle="tooltip" data-placement="right" title="اپ ها" data-nav-target="#apps">
+                                    <i data-feather="command"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="~/#" data-toggle="tooltip" data-placement="right" title="صفحات" data-nav-target="#pages">
+                                    <i data-feather="copy"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>*@
+                <div>
+                    <ul>
+                        <li>
+                            <a id="showStorySazNotif" class="active" href="#" data-toggle="tooltip" data-placement="right" title="نوتیف استوری ساز ">
+                                @if (hasData)
+                                {
+                                    <span class="spinner-grow text-danger" role="status">
+                                        <span class="sr-only">درحال بارگذاری...</span>
+                                    </span>
+                                }
+                                else
+                                {
+                                    <i class="fa fa-bell"></i>
+                                }
+                            </a>
+                        </li>
+                        <li id="reportAdverNotif">
+                            @if (reportsHasData)
+                            {
+                                <span  class="spinner-grow text-danger" role="status">
+                                    <span class="sr-only">درحال بارگذاری...</span>
+                                </span>
+                            }
+                            else
+                            {
+                                <a class="active" href="/Admin/ReportAdverts" data-toggle="tooltip" data-placement="right" title="ریپوزت ها">
+                                    <i class="fa fa-book"></i>
+                                </a>
+                            }
+                        </li>
+                        <li>
+
+                            <a href="/Admin/Settings" data-toggle="tooltip" data-placement="right" title="تنظیمات">
+                                <i data-feather="settings"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" onclick="signOut()" data-toggle="tooltip" data-placement="right" title="خروج">
+                                <i data-feather="log-out"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- begin::navigation menu -->
+            <div class="navigation-menu-body">
+                <audio controls="controls" class="d-none" id="sound">
+                    <source src="~/Sounds/swiftly-610.mp3" type="audio/mpeg" />
+                </audio>
+                <!-- begin::navigation-logo -->
+                <div>
+                    <div id="navigation-logo">
+                        <a href="#">
+                            <img class="logo" src="~/assets/media/image/logo-F.png.png" alt="logo">
+                            <img class="logo-light" src="~/assets/media/image/logo-F.png.png" alt="light logo">
+                        </a>
+                    </div>
+                </div>
+                <!-- end::navigation-logo -->
+
+                <div class="navigation-menu-group">
+
+                    <div class="open" id="dashboards">
+                        <ul>
+                            @*<li class="navigation-divider">داشبردها</li>*@
+                            <li><a class="dashboad-Links" href="/Admin/Dashboard">میزکار</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/Plans">مدیریت طرح ها</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/Advers">مدیریت آگهی ها</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/Categories">مدیریت حوزه فعالیت</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/JobSkill">مدیریت مهارت ها</a></li>
+                            @*<li><a class="dashboad-Links" href="/Admin/Languages">مدیریت زبان</a></li>*@
+                            <li><a class="dashboad-Links" href="/Admin/services">مدیریت خدمات</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/Blogs">مدیریت بلاگ ها</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/GiftCode">مدیریت کد تخفیف ها</a></li>
+
+
+                            <li><a class="dashboad-Links" href="/Admin/AnswerQuestions">سوالات متداول</a></li>
+                            <li style="position:relative;"><a class="dashboad-Links" href="/Admin/Tickets"> پیام ها </a><span id="notifCount" class="badge badge-danger"></span></li>
+                            <li style="position:relative;"><a class="dashboad-Links" href="/Admin/ContactUsManager"> تماس با ما </a><span id="notifCount" class="badge badge-danger"></span></li>
+                            <li><a class="dashboad-Links" href="/Admin/Companies">مدیریت کارفرمایان</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/Users">مدیریت کارجویان</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/Agent">مدیریت نمایندگان</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/admins">مدیریت ادمین</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/Payment">مدیریت مالی</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/RefrenceRequest">مدیریت درخواست های نمایندگان</a></li>
+                            <li><a class="dashboad-Links" href="/Admin/ReportAdverts">مدیریت ریپورت آگهی ها</a></li>
+
+
+                            @*<li><a href="~/dashboard-three.html">آنالیستیک</a></li>*@
+                            @*<li><a href="~/dashboard-four.html">مدیریت پروژه</a></li>*@
+                            @*<li><a href="~/dashboard-five.html">مدیریت هلپ‌دسک</a></li>*@
+                            @*<li class="navigation-divider">مخاطبان</li>*@
+
+                        </ul>
+                    </div>
+                    @*<div id="apps">
+                            <ul>
+                                <li class="navigation-divider">اپ های وب</li>
+                                <li>
+                                    <a href="~/chat.html">
+                                        <span>چت</span>
+                                        <span class="badge badge-danger">5</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="~/inbox.html">
+                                        <span>ایمیل</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="~/app-todo.html">
+                                        <span>تو دو</span>
+                                        <span class="badge badge-warning">2</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="~/file-manager.html">
+                                        <span>فایل منیجر</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="~/calendar.html">
+                                        <span>تقویم</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="elements">
+                            <ul>
+                                <li class="navigation-divider">عناصر رابط کاربری</li>
+                                <li>
+                                    <a href="~/#">پایه</a>
+                                    <ul>
+                                        <li><a href="~/alerts.html">پیام</a></li>
+                                        <li><a href="~/accordion.html">آکاردیون</a></li>
+                                        <li><a href="~/buttons.html">دکمه‌ها</a></li>
+                                        <li><a href="~/dropdown.html">دراپ‌داون</a></li>
+                                        <li><a href="~/list-group.html">گروه لیستی</a></li>
+                                        <li><a href="~/pagination.html">صفحه‌بندی</a></li>
+                                        <li><a href="~/typography.html">تایپوگرافی</a></li>
+                                        <li><a href="~/media-object.html">مدیا ابجکت</a></li>
+                                        <li><a href="~/progress.html">وضعیت پیشرفت</a></li>
+                                        <li><a href="~/modal.html"> مودال </a></li>
+                                        <li><a href="~/spinners.html">اسنیپرز</a></li>
+                                        <li><a href="~/navs.html">نویگیشن‌ها</a></li>
+                                        <li><a href="~/tab.html">تب</a></li>
+                                        <li><a href="~/tooltip.html">تولتیپ</a></li>
+                                        <li><a href="~/popovers.html">پاپ‌اور ها</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="~/#">کارت‌ها</a>
+                                    <ul>
+                                        <li><a href="~/basic-cards.html">کارت‌های پایه </a></li>
+                                        <li><a href="~/image-cards.html">کارت‌های تصویردار</a></li>
+                                        <li><a href="~/card-scroll.html">کارت‌ همراه با اسکرول</a></li>
+                                        <li><a href="~/other-cards.html">کارت‌های دیگر</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="~/avatar.html">آواتور</a></li>
+                                <li><a href="~/icons.html">ایکن‌ها</a></li>
+                                <li><a href="~/colors.html">رنگ‌ها</a></li>
+                                <li>
+                                    <a href="~/#">پلاگین</a>
+                                    <ul>
+                                        <li><a href="~/sweet-alert.html">سوییت الرت</a></li>
+                                        <li><a href="~/lightbox.html">لایت باکس</a></li>
+                                        <li><a href="~/toast.html">توست</a></li>
+                                        <li><a href="~/tour.html">تور</a></li>
+                                        <li><a href="~/slick-slide.html">اسلیک اسلاید</a></li>
+                                        <li><a href="~/nestable.html"> نست‌ایبل </a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="~/#">فرمها</a>
+                                    <ul>
+                                        <li><a href="~/basic-form.html">چینش فرم</a></li>
+                                        <li><a href="~/custom-form.html">فرم سفارشی</a></li>
+                                        <li><a href="~/advanced-form.html">فرم پیشرفته</a></li>
+                                        <li><a href="~/form-validation.html">اعتبارسنجی</a></li>
+                                        <li><a href="~/form-wizard.html">ویزارد</a></li>
+                                        <li><a href="~/file-upload.html">آپلود فایل</a></li>
+                                        <li><a href="~/datepicker.html">انتخابگر تاریخ</a></li>
+                                        <li><a href="~/timepicker.html">انتخابگر زمان</a></li>
+                                        <li><a href="~/colorpicker.html">انتخابگر رنگ</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="~/#">جدول‌ها</a>
+                                    <ul>
+                                        <li><a href="~/tables.html">جدول پایه</a></li>
+                                        <li><a href="~/data-table.html">جدول داده‌ای</a></li>
+                                        <li><a href="~/responsive-table.html">جدول رسپانسیو</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="~/#">نمودارها</a>
+                                    <ul>
+                                        <li><a href="~/apexchart.html">اپکس</a></li>
+                                        <li><a href="~/chartjs.html">چارت جی‌اس</a></li>
+                                        <li><a href="~/justgage.html">چارت جاستگیگ</a></li>
+                                        <li><a href="~/morsis.html">چارت مورسیس</a></li>
+                                        <li><a href="~/peity.html">چارت پتی</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="~/#">نقشه</a>
+                                    <ul>
+                                        <li><a href="~/google-map.html">گوگل</a></li>
+                                        <li><a href="~/vector-map.html">وکتور</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="pages">
+                            <ul>
+                                <li class="navigation-divider">صفحات</li>
+                                <li><a href="~/login.html">ورود</a></li>
+                                <li><a href="~/register.html">ثبت‌نام</a></li>
+                                <li><a href="~/recover-password.html">بازگردانی رمزعبور</a></li>
+                                <li><a href="~/lock-screen.html">قفل صفحه</a></li>
+                                <li><a href="~/profile.html">پروفایل</a></li>
+                                <li><a href="~/timeline.html">تایملاین</a></li>
+                                <li><a href="~/invoice.html">صورت‌حساب</a></li>
+
+                                <li><a href="~/pricing-table.html">جدول قیمت</a></li>
+                                <li><a href="~/search-result.html">نتایج جستجو</a></li>
+                                <li>
+                                    <a href="~/#">صفحات خطا</a>
+                                    <ul>
+                                        <li><a href="~/404.html">404</a></li>
+                                        <li><a href="~/404-2.html">404ورژن2</a></li>
+                                        <li><a href="~/503.html">503</a></li>
+                                        <li><a href="~/mean-at-work.html">در حال ساخت</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="~/blank-page.html">صفحه شروع</a></li>
+                                <li>
+                                    <a href="~/#">قالب ایمیل</a>
+                                    <ul>
+                                        <li><a href="~/email-template-basic.html">پایه</a></li>
+                                        <li><a href="~/email-template-alert.html">پیام</a></li>
+                                        <li><a href="~/email-template-billing.html">صورتحساب</a></li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="~/#">سطح منو</a>
+                                    <ul>
+                                        <li>
+                                            <a href="~/#">سطح منو</a>
+                                            <ul>
+                                                <li>
+                                                    <a href="~/#">سطح منو</a>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </div>*@
+                </div>
+            </div>
+            <!-- end::navigation menu -->
+
+        </div>
+        <!-- end::navigation -->
+        <!-- begin::main-content -->
+        <div class="main-content">
+
+            <!-- begin::page-header -->
+            <!-- end::page-header -->
+            <!-- begin::page content -->
+            <div class="container-fluid">
+
+                <!--check authorization-->
+                <script src="~/vendors/bundle.js"></script>
+                <script src="~/assets/js/app.min.js"></script>
+
+                <script type="text/javascript">
+                    async function checkAuthorization() {
+                        await $.ajax({
+                            beforeSend: setAuthHeader,
+                            method: "Get",
+                            url: '/api/Account/IsAdmin',
+                            contentType: 'application/json',
+                            data: {}
+
+                        });
+
+                    }
+                    console.log($("#c").val());
+
+                    checkAuthorization().then(() => {
+                    }
+                    ).catch(er => {
+                        location.href = "/Admin/Login";
+                        return;
+
+                    });
+
+                </script>
+                @RenderBody()
+            </div>
+            <div id="notifModal" class="modal" tabindex="-1" role="dialog">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">درخواست های استوری ساز</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card">
+                                <div class="card-body">
+                                    @*<div class="d-flex justify-content-between">
+                                            <h6 class="card-title mb-0">درخواست استوری ساز</h6>
+                                        </div>*@
+                                </div>
+                                <table id="storySazNoifications" class="table table-striped">
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button onclick="closenotifModal()" type="button" class="btn btn-outline-danger">بستن</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end::page content -->
+            <!-- begin::footer -->
+            <footer>
+                <div class="container-fluid">
+                    <div style="margin-inline-start: auto" class="mt-2">© 1399 | قالب مدیریت کاتینو ورژن 1.0.0 ارایه از  <a href="~/">Niknet</a></div>
+
+                </div>
+            </footer>
+            <!-- end::footer -->
+
+        </div>
+        <!-- end::main-content -->
+
+    </div>
+    <!-- end::main -->
+    <!-- Plugin scripts -->
+    <script src="~/vendors/bundle.js"></script>
+
+    <!-- Chartjs -->
+    <script src="~/vendors/charts/chartjs/chart.min.js"></script>
+
+    <!-- Apex chart -->
+    <script src="~/vendors/charts/apex/apexcharts.min.js"></script>
+
+    <!-- Circle progress -->
+    <script src="~/vendors/circle-progress/circle-progress.min.js"></script>
+
+    <!-- Peity -->
+    <script src="~/vendors/charts/peity/jquery.peity.min.js"></script>
+    <script src="~/assets/js/examples/charts/peity.js"></script>
+
+    <!-- Datepicker -->
+    <script src="~/vendors/datepicker/daterangepicker.js"></script>
+    <script src="~/assets/Datepiker/persian-datepicker.js"></script>
+    <script src="~/vendors/datepicker/bootstrap-datepicker.fa.min.js"></script>
+
+
+    <!-- Slick -->
+    <script src="~/vendors/slick/slick.min.js"></script>
+
+    <!-- Vamp -->
+    <script src="~/vendors/vmap/jquery.vmap.min.js"></script>
+    <script src="~/vendors/vmap/maps/jquery.vmap.usa.js"></script>
+    <script src="~/assets/js/examples/vmap.js"></script>
+
+
+    <!-- a -->
+    <script src='~/assets/Cal/moment.js'></script>
+    <script src='~/assets/Cal/moment-jalaali.js'></script>
+    <script src='~/assets/Cal/fullcalendar.js'></script>
+    <script src='~/assets/Cal/fa.js'></script>
+
+
+    <!-- Dashboard scripts -->
+    <script src="~/assets/js/examples/dashboard.js"></script>
+    <div class="colors">
+        <!-- To use theme colors with Javascript -->
+        <div class="bg-primary"></div>
+        <div class="bg-primary-bright"></div>
+        <div class="bg-secondary"></div>
+        <div class="bg-secondary-bright"></div>
+        <div class="bg-info"></div>
+        <div class="bg-info-bright"></div>
+        <div class="bg-success"></div>
+        <div class="bg-success-bright"></div>
+        <div class="bg-danger"></div>
+        <div class="bg-danger-bright"></div>
+        <div class="bg-warning"></div>
+        <div class="bg-warning-bright"></div>
+    </div>
+
+
+    <!-- App scripts -->
+    <script src="~/assets/js/app.min.js"></script>
+    <script src="~/signalR/signalr.min.js"></script>
+    <script src="~/signalR/chat.js"></script>
+    <script src="~/jquery.cookie.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script>
+        $(document).ajaxStart(function () {
+            $("#loadingDiv").removeClass("d-none");
+            document.onkeydown = function (e) {
+                return false;
+            }
+        });
+        $(document).ajaxComplete(function () {
+            $("#loadingDiv").addClass("d-none");
+            document.onkeydown = function (e) {
+                return true;
+            }
+        });
+
+        $(document).ready(async function () {
+
+
+
+
+
+            GetNotifCount();
+            var url = window.location.href;
+            var locationOf = url.indexOf("Admin");
+            var finalUrl = url.substring(locationOf - 1);
+            finalUrl = finalUrl.replace("/Index", "");
+            $(".dashboad-Links").each(function () {
+                var href = $(this).attr("href");
+                if (href.toLowerCase() == finalUrl.toLowerCase() || href.toLowerCase() == finalUrl.toLowerCase()) {
+                    $(this).addClass("active");
+                }
+            });
+
+            //set token
+
+        });
+        $("#notifCount").click(function () {
+            var sound = document.getElementById("sound");
+            sound.play();
+        })
+        var notifCount = 0;
+        function GetNotifCount() {
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Get",
+                url: '/api/Tickets/GetNotifTicketCountForAdmin',
+                data: {},
+                //cache: false,
+                contentType: 'application/json',
+                //processData: false,
+                success: function (data) {
+                    $("#notifCount").removeClass("d-none");
+
+                    $("#notifCount").html(data);
+                    notifCount = data;
+
+                },
+                error: function (data) {
+
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+                    })
+                }
+            });
+
+
+        }
+
+        try {
+            Notification.requestPermission()
+                .then(() => console.log('granted'));
+        } catch (error) {
+            if (error instanceof TypeError) {
+                new Notification.requestPermission(() => {
+                    console.log('granted');
+                });
+            } else {
+                // alert(error);
+            }
+        }
+        function Notif(body) {
+            new Notification('کاتینو', { body: body, icon: '/Img/CompanyLogo/logo.png' });
+
+        }
+
+        setTimeout(function () {
+            GetConnection($('#adminUsername').val());
+        }, 1000)
+
+        function loading() {
+            Swal.fire({
+                html: '<p>در حال بارگذاری</p><img src="/load.gif"/>',
+                allowOutsideClick: false,
+                showCancelButton: false,
+                showConfirmButton: false
+            });
+        }
+
+        $('#showStorySazNotif').on('click', function () {
+            loading();
+            $.ajax({
+                url: '/api/account/getStorySazNotif',
+                method: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    console.log(data.length);
+                    $('#storySazNoifications').empty()
+                    $('#storySazNoifications').append('<thead><tr><th>شرکت</th><th>آگهی</th><th>کد آگهی</th><th></th/></tr></thead>')
+                    for (var i = 0; i < data.length; i++) {
+                        let item = data[i];
+                        $('#storySazNoifications').append('<thead><tr><th>' + item.companyPersianName + '</th><th>' + item.title +
+                            '</th><th>' + item.jobAdvertisementId + '</th><th> <button id="toggleStorySazNotifIsSeenBtn-' + item.id + '" class="btn btn-success btn-sm" onclick="toggleStorySazNotifIsSeen(' + item.id + ')">مشاهده شد</button></th/></tr></thead>')
+
+                    }
+                    Swal.close();
+                    $('#notifModal').modal();
+                    setTimeout(function (){$('body').css('padding-right', '0px');}, 2000)
+                    
+                }
+            })
+        })
+        
+        $('#reportAdverNotif').on('click', function () {
+            loading();
+            location.href = '/Admin/ReportAdverts';
+        })
+
+        function toggleStorySazNotifIsSeen(id) {
+            loading();
+            let model = {
+                id
+            }
+            $.ajax({
+                url: '/api/account/toggleStorySazNotifIsSeen',
+                method: 'GET',
+                data: model,
+                success: function (data) {
+                    console.log(data);
+                    $('#toggleStorySazNotifIsSeenBtn-' + id).removeClass('btn-success');
+                    $('#toggleStorySazNotifIsSeenBtn-' + id).addClass('btn-danger');
+                    $('#toggleStorySazNotifIsSeenBtn-' + id).addClass('disabled');
+                    $('#toggleStorySazNotifIsSeenBtn-' + id).text('انجام شد');
+                    document.getElementById('toggleStorySazNotifIsSeenBtn-' + id).onclick = '#';
+                    Swal.close();
+                }
+            })
+        }
+        function closenotifModal() {
+            setTimeout(function () { $('body').css('padding-right', '0px'); }, 2000)
+            $('#notifModal').modal('toggle')
+        }
+        setInterval(function () { $('body').css('padding-right', '0px'); }, 1000);
+    </script>
+
+    @RenderSection("scripts", required: false)
+
+</body>
+
+</html>

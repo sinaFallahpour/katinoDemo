@@ -1,0 +1,83 @@
+.form-container-bg {
+  margin: 10px auto;
+  box-shadow: 0 0 10px 1px rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+  padding: 10px 0;
+}
+
+.Field-Container {
+  display: flex;
+  justify-content: space-between;
+}
+.Field-Container > * {
+  width: 48% !important;
+}
+
+@media only screen and (max-width: 510px) {
+  .Field-Container {
+    flex-direction: column;
+  }
+  .Field-Container > * {
+    width: 100% !important;
+  }
+}
+
+.JobExpreinceDetails {
+  background: #fff;
+  box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.1);
+  margin: 15px 0;
+  border-radius: 6px !important;
+  padding: 15px !important;
+  padding-bottom: 0 !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-basis: 0 !important;
+}
+
+.JobExpreinceDetails > * {
+  flex-basis: 0 !important;
+  padding: 5px 8px !important;
+}
+
+.FormContainerAnimation:not(:nth-child(1)) {
+  animation: anim 0.5s ease-in-out;
+  position: relative;
+  top: 0;
+  right: 0;
+}
+
+@keyframes anim {
+  from {
+    top: -80px;
+  }
+  to {
+    top: 0;
+  }
+}
+
+.editableContainer {
+  display: flex;
+  align-items: center;
+}
+.editableContainerLink {
+  color: #138496;
+  border: 1px solid #138496;
+  border-radius: 5px;
+  padding: 2px 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.editableContainerLink:hover {
+  filter: brightness(80%);
+  text-decoration: none;
+}
+.TitleOfCreateResume {
+  background-color: #fff;
+  color: #444;
+  border-radius: 8px;
+  padding: 10px 5px;
+  text-align: center;
+  font-family: iransans-bold;
+  font-size: 1.8rem;
+  margin: 15px auto;
+}

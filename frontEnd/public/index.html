@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="fa">
+  <head>
+    <title>کاتینو کاریابی</title>
+
+    <meta charset="utf-8" />
+    <meta name="description" content="کاتینو کاریابی | کاتینوجاب" />
+    <meta
+      name="keywords"
+      content="کاتینوجاب,کاتینواستخدام,کاریابی کاتینو,کاریابی کاتینو جاب,کاتینو کار,استخدام,کاریابی,آگهی استخدام,رزومه ساز آنلاین,کار,katino.job,katino_job,katino karyabi,Job"
+    />
+    
+    <meta name="author" content="کاتینو~" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+    />
+
+    <link rel="dns-prefetch" href="https://app.raychat.io" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css"
+      integrity="sha512-NmLkDIU1C/C88wi324HBc+S2kLhi08PN5GDeUVVVC/BVt/9Izdsc9SVeVfA1UZbY3sHUlDSyRXhCzHfr6hmPPw=="
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css"
+      integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog=="
+      crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="/css/spacing.min.css" />
+    <link rel="stylesheet" href="/css/main.css" />
+    <link rel="icon" href="/favicon/favicon.ico" />
+
+    <link rel="manifest" href="/manifest.json" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="white" />
+    <meta name="apple-mobile-web-app-title" content="کاتینو" />
+    <link rel="apple-touch-icon" href="/favicon/16x16.png" sizes="16x16" />
+    <link rel="apple-touch-icon" href="/favicon/32x32.png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/favicon/48x48.png" sizes="48x48" />
+    <link rel="apple-touch-icon" href="/favicon/64x64.png" sizes="64x64" />
+    <link rel="apple-touch-icon" href="/favicon/128x128.png" sizes="128x128" />
+    <link
+      rel="apple-touch-icon"
+      href="/favicon/android-chrome-192x192.png"
+      sizes="192x192"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="/favicon/android-chrome-256x256.png"
+      sizes="256x256"
+    />
+    <meta
+      name="msapplication-TileImage"
+      content="/favicon/android-chrome-192x192.png"
+    />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="theme-color" content="#fff" />
+
+    <!-- Magnific Popup core CSS file -->
+    <link rel="stylesheet" href="/magnific-popup/magnific-popup.css" />
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <!--BEGIN RAYCHAT CODE-->
+    <script type="text/javascript">
+      !(function () {
+        function t() {
+          var t = document.createElement("script");
+          (t.type = "text/javascript"),
+            (t.async = !0),
+            localStorage.getItem("rayToken")
+              ? (t.src =
+                  "https://app.raychat.io/scripts/js/" +
+                  o +
+                  "?rid=" +
+                  localStorage.getItem("rayToken") +
+                  "&href=" +
+                  window.location.href)
+              : (t.src =
+                  "https://app.raychat.io/scripts/js/" +
+                  o +
+                  "?href=" +
+                  window.location.href);
+          var e = document.getElementsByTagName("script")[0];
+          e.parentNode.insertBefore(t, e);
+        }
+        var e = document,
+          a = window,
+          o = "9b2ac482-bf5c-4677-b2ef-3205cef84601";
+        "complete" == e.readyState
+          ? t()
+          : a.attachEvent
+          ? a.attachEvent("onload", t)
+          : a.addEventListener("load", t, !1);
+      })();
+    </script>
+    <!--END RAYCHAT CODE-->
+
+    <script>
+      "serviceWorker" in navigator &&
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./serviceWorker.js")
+            .then(function () {
+              console.log("Successfully registered service worker");
+            })
+            .catch(function () {
+              console.warn("Error whilst registering service worker");
+            });
+        });
+    </script>
+
+    <!-- jQuery 1.7.2+ or Zepto.js 1.0+ -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+    <!-- Magnific Popup core JS file -->
+    <script src="/magnific-popup/jquery.magnific-popup.js"></script>
+
+    <script>
+      var groups = {};
+      $(".galleryItem").each(function () {
+        var id = parseInt($(this).attr("data-group"), 10);
+
+        if (!groups[id]) {
+          groups[id] = [];
+        }
+
+        groups[id].push(this);
+      });
+
+      $.each(groups, function () {
+        $(this).magnificPopup({
+          type: "image",
+          closeOnContentClick: true,
+          closeBtnInside: false,
+          gallery: { enabled: true },
+        });
+      });
+    </script>
+  </body>
+</html>

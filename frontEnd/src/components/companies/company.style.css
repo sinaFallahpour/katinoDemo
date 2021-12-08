@@ -1,0 +1,63 @@
+.cartContainer {
+  transition: 0.3s;
+  padding: 10px 20px;
+  box-shadow: 0 5px 10px 1px rgba(0, 0, 0, 0.05);
+  display: block;
+  text-decoration: none !important;
+  color: #666 !important;
+  font-family: IranSans-regular;
+}
+.cartContainer:hover {
+  box-shadow: 0 5px 10px 1px rgba(0, 0, 0, 0.1);
+}
+
+.cartHeaderContainer {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  margin-bottom: 30px;
+  padding: 10px 0;
+}
+.logoContainer {
+  width: 120px;
+  height: 120px;
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background-color: #fff;
+  box-shadow: 0 5px 10px 1px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -60px;
+  right: 0;
+}
+.logoContainer > * {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.cartContextContainer {
+  padding: 10px 15px;
+  padding-top: 20px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.cartContextContainer > * {
+  margin-left: 15px;
+}
+
+.DescriptionContainer {
+  display: block;
+  padding: 5px 20px;
+}
+.ToggleAdvItems {
+  text-align: center;
+  color: #666;
+  font-family: IranSans-regular;
+}

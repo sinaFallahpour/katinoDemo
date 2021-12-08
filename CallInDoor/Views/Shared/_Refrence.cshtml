@@ -1,0 +1,374 @@
+﻿
+<!doctype html>
+<html lang="en">
+@using Domain
+@inject DataContext _context;
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>کاتینو - میزکار نماینده</title>
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/media/image/favicon.png" />
+
+    <!-- Plugin styles -->
+    <link rel="stylesheet" href="/vendors/bundle.css" type="text/css">
+
+    <!-- Datepicker -->
+    <link rel="stylesheet" href="/vendors/datepicker/daterangepicker.css">
+    <link rel="stylesheet" href="/assets/Datepiker/persian-datepicker.css">
+
+
+
+    <!-- Fullcalendar -->
+    <link rel="stylesheet" href="/vendors/fullcalendar/fullcalendar.min.css" type="text/css">
+    <link href='/assets/Cal/fullcalendar.css' rel='stylesheet' />
+    @*<link href='assets/Cal/fullcalendar.print.css' rel='stylesheet' media='print' />*@
+    <!-- Vmap -->
+    <link rel="stylesheet" href="/vendors/vmap/jqvmap.min.css">
+
+    <!-- App styles -->
+    <link rel="stylesheet" href="/assets/css/app.min.css" type="text/css">
+    <link href="/assets/css/ToggleSwitch.css" rel="stylesheet" />
+    @*<script src="/assets/js/app-refrence.min.js"></script>*@
+
+    <script type="module">
+        async function checkAuthorization() {
+            //alert()
+            var token = localStorage.getItem('token') || sessionStorage.getItem('token');
+            //(function () {
+            if (!token) {
+                location.href = '/Refrence/Login';
+                return;
+            }
+            //else token =
+            //if (!userInfo) location.href = '/Refrence/Login';
+            //else token = JSON.parse(token);
+            //})();
+
+            var setAuthHeader = function (request) {
+                request.setRequestHeader('Authorization', 'Bearer ' + token);
+            }
+            //alert(":(");
+            await $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Get",
+                url: '/api/Account/IsRefrence',
+                contentType: 'application/json',
+                data: {},
+                success: function () {
+                },
+                error: function (error) {
+                    location.href = '/Refrence/Login';
+                }
+            });
+
+        }
+
+        checkAuthorization();
+
+    </script>
+
+    <style>
+        #notifCount {
+            position: absolute;
+            left: 5%;
+            bottom: 16%;
+            cursor: pointer;
+        }
+
+        #loadingDiv {
+            width: 10000px;
+            height: 1500px;
+            background: rgba(0,0,0,0.6);
+            /* opacity: 0.4;*/
+            z-index: 1100;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding-left: 50%;
+            padding-top: 50%;
+        }
+
+        #imgLoading {
+            position: fixed;
+            max-height: 23%;
+            max-width: 19%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%)
+        }
+    </style>
+    @RenderSection("styles", required: false)
+
+</head>
+<body>
+    <div id="loadingDiv" class="d-none">
+        <img id="imgLoading" src="/assets/media/image/Loading.gif" />
+
+    </div>
+    @*<input hidden id="adminUsername" value="@userName" />*@
+    <!-- begin::preloader-->
+    <div class="preloader">
+        <div class="preloader-icon"></div>
+    </div>
+    <!-- end::preloader -->
+    <!-- begin::header -->
+    <div class="header">
+
+        <div>
+            <ul class="navbar-nav">
+                <li class="nav-item navigation-toggler">
+                    <a href="javascript:;" class="nav-link" title="Hide navigation">
+                        <i data-feather="arrow-left"></i>
+                    </a>
+                </li>
+                <li class="nav-item navigation-toggler mobile-toggler">
+                    <a href="javascript:;" class="nav-link" title="Show navigation">
+                        <i data-feather="menu"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+
+
+    </div>
+    <!-- end::header -->
+    <!-- begin::main -->
+    <div id="main">
+
+        <!-- begin::navigation -->
+        <div class="navigation">
+
+            <div class="navigation-menu-tab">
+                <div>
+                </div>
+                @*<div class="flex-grow-1">
+                        <ul>
+                            <li>
+                                <a class="active" href="/#" data-toggle="tooltip" data-placement="right" title="داشبردها"
+                                   data-nav-target="#dashboards">
+                                    <i data-feather="bar-chart-2"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/#" data-toggle="tooltip" data-placement="right" title="اپ ها" data-nav-target="#apps">
+                                    <i data-feather="command"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/#" data-toggle="tooltip" data-placement="right" title="عناصر رابط کاربری"
+                                   data-nav-target="#elements">
+                                    <i data-feather="layers"></i>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/#" data-toggle="tooltip" data-placement="right" title="صفحات" data-nav-target="#pages">
+                                    <i data-feather="copy"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>*@
+                <div>
+                    <ul>
+                        <li>
+
+                            <a href="/Admin/Settings" data-toggle="tooltip" data-placement="right" title="تنظیمات">
+                                <i data-feather="settings"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="" onclick="signOut()" data-toggle="tooltip" data-placement="right" title="خروج">
+                                <i data-feather="log-out"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- begin::navigation menu -->
+            <div class="navigation-menu-body">
+                <audio controls="controls" class="d-none" id="sound">
+                    <source src="/Sounds/swiftly-610.mp3" type="audio/mpeg" />
+                </audio>
+                <!-- begin::navigation-logo -->
+                <div>
+                    <div id="navigation-logo">
+                        <a href="#">
+                            <img class="logo" src="/assets/media/image/logo-F.png.png" alt="logo">
+                            <img class="logo-light" src="/assets/media/image/logo-F.png.png" alt="light logo">
+                        </a>
+                    </div>
+                </div>
+                <!-- end::navigation-logo -->
+
+                <div class="navigation-menu-group">
+
+                    <div class="open" id="dashboards">
+                        <ul>
+                            @*<li class="navigation-divider">داشبردها</li>*@
+                            <li><a class="dashboad-Links" href="/Refrence/Dashboard">میزکار</a></li>
+                            @*<li><a class="dashboad-Links" href="/Admin/Plans">مدیریت طرح ها</a></li>*@
+                            <li><a class="dashboad-Links" href="/Refrence/Advers">مدیریت آگهی ها</a></li>
+                            @*<li><a class="dashboad-Links" href="/Admin/Categories">مدیریت حوزه فعالیت</a></li>*@
+                            @*<li><a class="dashboad-Links" href="/Admin/JobSkill">مدیریت حرفه فعالیت</a></li>*@
+                            @*<li><a class="dashboad-Links" href="/Admin/Languages">مدیریت زبان</a></li>*@
+                            @*<li><a class="dashboad-Links" href="/Admin/Blogs">مدیریت بلاگ ها</a></li>*@
+                            @*<li><a class="dashboad-Links" href="/Admin/GiftCode">مدیریت کد تخفیف ها</a></li>*@
+
+
+                            @*<li><a class="dashboad-Links" href="/Admin/AnswerQuestions">سوالات متداول</a></li>*@
+                            <li style="position:relative;"><a class="dashboad-Links" href="/Refrence/Tickets"> پیام ها </a><span id="notifCount" class="badge badge-danger"></span></li>
+                            @*<li style="position:relative;"><a class="dashboad-Links" href="/Admin/ContactUsManager"> تماس با ما </a><span id="notifCount" class="badge badge-danger"></span></li>*@
+                            <li><a class="dashboad-Links" href="/Refrence/Companies">مدیریت کارفرمایان</a></li>
+                            <li><a class="dashboad-Links" href="/Refrence/Users">مدیریت کارجویان</a></li>
+                            <li><a class="dashboad-Links" href="/Refrence/Payment">مدیریت مالی</a></li>
+                            <li><a class="dashboad-Links" href="/Refrence/RefrenceRequest">مدیریت درخواست ها </a></li>
+
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- end::navigation menu -->
+
+        </div>
+        <!-- end::navigation -->
+        <!-- begin::main-content -->
+        <div class="main-content">
+
+            <!-- begin::page-header -->
+            <!-- end::page-header -->
+            <!-- begin::page content -->
+            <div class="container-fluid">
+
+                <!--check authorization-->
+                <script src="/vendors/bundle.js"></script>
+                <script src="/assets/js/app-refrence.min.js"></script>
+
+                @RenderBody()
+            </div>
+            <!-- end::page content -->
+            <!-- begin::footer -->
+            <footer>
+                <div class="container-fluid">
+                    @*<div style="margin-inline-start: auto" class="mt-2">© 1399 | قالب مدیریت کاتینو ورژن 1.0.0 ارایه از  <a href="/">Niknet</a></div>*@
+
+                </div>
+            </footer>
+            <!-- end::footer -->
+
+        </div>
+        <!-- end::main-content -->
+
+    </div>
+    <!-- end::main -->
+    <!-- Plugin scripts -->
+    <script src="/vendors/bundle.js"></script>
+
+    <!-- Chartjs -->
+    <script src="/vendors/charts/chartjs/chart.min.js"></script>
+
+    <!-- Apex chart -->
+    <script src="/vendors/charts/apex/apexcharts.min.js"></script>
+
+    <!-- Circle progress -->
+    <script src="/vendors/circle-progress/circle-progress.min.js"></script>
+
+    <!-- Peity -->
+    <script src="/vendors/charts/peity/jquery.peity.min.js"></script>
+    <script src="/assets/js/examples/charts/peity.js"></script>
+
+    <!-- Datepicker -->
+    <script src="/vendors/datepicker/daterangepicker.js"></script>
+    <script src="/assets/Datepiker/persian-datepicker.js"></script>
+    <script src="/vendors/datepicker/bootstrap-datepicker.fa.min.js"></script>
+
+
+    <!-- Slick -->
+    <script src="/vendors/slick/slick.min.js"></script>
+
+    <!-- Vamp -->
+    <script src="/vendors/vmap/jquery.vmap.min.js"></script>
+    <script src="/vendors/vmap/maps/jquery.vmap.usa.js"></script>
+    <script src="/assets/js/examples/vmap.js"></script>
+
+
+    <!-- a -->
+    <script src='/assets/Cal/moment.js'></script>
+    <script src='/assets/Cal/moment-jalaali.js'></script>
+    <script src='/assets/Cal/fullcalendar.js'></script>
+    <script src='/assets/Cal/fa.js'></script>
+
+
+    <!-- Dashboard scripts -->
+    <script src="/assets/js/examples/dashboard.js"></script>
+    <div class="colors">
+        <!-- To use theme colors with Javascript -->
+        <div class="bg-primary"></div>
+        <div class="bg-primary-bright"></div>
+        <div class="bg-secondary"></div>
+        <div class="bg-secondary-bright"></div>
+        <div class="bg-info"></div>
+        <div class="bg-info-bright"></div>
+        <div class="bg-success"></div>
+        <div class="bg-success-bright"></div>
+        <div class="bg-danger"></div>
+        <div class="bg-danger-bright"></div>
+        <div class="bg-warning"></div>
+        <div class="bg-warning-bright"></div>
+    </div>
+
+
+    <!-- App scripts -->
+    <script src="/Js/JwtRefrence.js"></script>
+    <script src="/assets/js/app-refrence.min.js"></script>
+    <script>
+        $(document).ajaxStart(function () {
+            $("#loadingDiv").removeClass("d-none");
+            document.onkeydown = function (e) {
+                return false;
+            }
+        });
+        $(document).ajaxComplete(function () {
+            $("#loadingDiv").addClass("d-none");
+            document.onkeydown = function (e) {
+                return true;
+            }
+        });
+
+        $(document).ready(async function () {
+
+
+
+
+
+            var url = window.location.href;
+            var locationOf = url.indexOf("Refrence");
+            var finalUrl = url.substring(locationOf - 1);
+            finalUrl = finalUrl.replace("/Index", "");
+            $(".dashboad-Links").each(function () {
+                var href = $(this).attr("href");
+                if (href.toLowerCase() == finalUrl.toLowerCase() || href.toLowerCase() == finalUrl.toLowerCase()) {
+                    $(this).addClass("active");
+                }
+            });
+
+            //set token
+
+        });
+
+
+
+
+    </script>
+
+    @RenderSection("scripts", required: false)
+
+</body>
+
+</html>

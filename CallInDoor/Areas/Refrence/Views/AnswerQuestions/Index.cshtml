@@ -1,0 +1,311 @@
+﻿
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section styles{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+    <link rel="~/stylesheet" href="vendors/dataTable/dataTables.min.css" type="text/css">
+    <style>
+        #createAnswerQuestionButton {
+            margin-top: 3%;
+            display: block;
+            margin-right: 35%;
+            width: 25%;
+            text-align: center;
+            padding: 2%;
+        }
+
+        #myTable {
+            text-align: center;
+        }
+
+        i {
+            font-size: 30px;
+        }
+    </style>
+}
+<h1>سوالات متداول</h1>
+
+
+<hr />
+<button type="button" id="createAnswerQuestionButton" class="btn btn-primary mr-2 mb-2" data-toggle="modal" data-target="#createModal">
+    ایجاد
+</button>
+<hr />
+<table id="myTable" class="table table-striped table-bordered col-xs-1 center-block">
+    <thead>
+        <tr>
+
+            <th>#</th>
+            <th>سوال</th>
+            <th style="max-width:50% !important">جواب</th>
+            <th>ویرایش</th>
+
+        </tr>
+    </thead>
+    <tbody id="rewsOfTable">
+    </tbody>
+</table>
+<div class="modal fade" tabindex="-1" role="dialog" id="createModal">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ایجاد سوال  جدید</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true" id="closemodals" data-dismiss="modal">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <form id="createAnswerQuestionForm">
+                    <input type="hidden" value="" name="id" id="id" />
+                    <div class="form-row">
+                        <div class="form-group col-md-12">
+                            <label for="Question">سوال </label>
+                            <input type="text" name="Question" class="form-control" id="Question">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="Answer">جواب </label>
+                            <input type="text" name="Answer" class="form-control" id="Answer">
+                        </div>
+                    </div>
+
+
+                    <button type="submit" id="createAnswerQuestion" class="btn btn-block btn-primary m-auto btn-block">ثبت</button>
+
+
+                </form>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/vendors/dataTable/jquery.dataTables.min.js"></script>
+
+    <!-- Bootstrap 4 and responsive compatibility -->
+    <script src="~/vendors/dataTable/dataTables.bootstrap4.min.js"></script>
+    <script src="~/vendors/dataTable/dataTables.responsive.min.js"></script>
+    <script>
+        var AnswerQuestion;
+        var isEdit = false;
+        $(document).ready(function () {
+
+            GetData('/api/AnswerQuestion/GetAllAnswerQuestion', {}, false);
+
+        });
+        function GetData(url, data, isAlreadyTable) {
+            if (isAlreadyTable == true) {
+                $('#myTable').DataTable().destroy();
+            }
+            var oTable = $('#myTable').DataTable({
+                ordering: false,
+
+                processing: true,
+                paging: true,
+                AnswerQuestion: {
+                    url: "//cdn.datatables.net/plug-ins/1.10.20/i18n/Persian.json"
+                },
+                ajax: {
+                    beforeSend: setAuthHeader,
+                    url: url,
+                    dataSrc: "",
+                    type: "GET",
+                    dataType: "json",
+                    delay: 1000,
+                    data: data,
+                    cache: true
+
+                },
+                columns: [
+                    {
+                        data: 'id'
+                    }, {
+                        data: 'question'
+                    }
+                    ,
+                    {
+                        data: 'answer'
+                    },
+
+                    {
+
+                        data: "id",
+                        render: function (data, type, item) {
+
+
+                            return `<i class="fa fa-pencil-square-o text-warning" style="cursor: pointer;font-size: 30px;" aria-hidden="true" data-id=${data} onclick="editAnswerQuestion(this)"></i>
+                                        <i class="fa fa fa-trash text-danger" style="cursor: pointer;font-size: 30px;" aria-hidden="true" data-id=${data} onclick="deleteAnswerQuestion(this)"></i>`;
+                        }
+                    }
+                ],
+            });
+        };
+
+        $('#createAnswerQuestionForm').submit(function (e) {
+            e.preventDefault();
+            if (isEdit) {
+                $.ajax({
+                    beforeSend: setAuthHeader,
+                    method: "POST",
+                    url: '/api/AnswerQuestion/EditAnswerQuestion',
+                    contentType: 'application/json',
+                    data: JSON.stringify(serializeForm(document.querySelector('#createAnswerQuestionForm'))),
+                    success: function (data) {
+                        if (data.statusCode == '200') {
+                            toastr.success(data.message);
+                            $("#createModal").modal("hide");
+                            $('#closemodals').click();
+                            $(".modal-backdrop").removeClass("show");
+                            GetData('/api/AnswerQuestion/GetAllAnswerQuestion', {}, true);
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function (data) {
+                        if (data.responseJSON == undefined) {
+                            toastr.error("مشکلی رخ داده است");
+                            return;
+
+                        }
+                        var errors = data.responseJSON.message;
+                        errors.forEach(elem => {
+                            if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                            if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                            toastr.error(elem);
+
+
+                        })
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    beforeSend: setAuthHeader,
+                    method: "POST",
+                    url: '/api/AnswerQuestion/CreateAnswerQuestion ',
+                    contentType: 'application/json',
+                    data: JSON.stringify(serializeForm(document.querySelector('#createAnswerQuestionForm'))),
+
+                    //cache: false,
+                    //contentType: false,
+                    //processData: false,
+                    success: function (data) {
+                        if (data.statusCode == '200') {
+                            toastr.success(data.message);
+                            $("#createModal").modal("hide");
+                            $('#closemodals').click();
+                            $(".modal-backdrop").removeClass("show");
+                            GetData('/api/AnswerQuestion/GetAllAnswerQuestion', {}, true);
+                        } else {
+                            toastr.error(data.message);
+                        }
+                    },
+                    error: function (data) {
+                        if (data.responseJSON == undefined) {
+                            toastr.error("مشکلی رخ داده است");
+                            return;
+
+                        }
+                        var errors = data.responseJSON.message;
+                        errors.forEach(elem => {
+                            if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                            if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                            toastr.error(elem);
+
+
+                        })
+                    }
+                });
+            }
+            isEdit = false;
+        });
+        function editAnswerQuestion(e) {
+            var id = $(e).attr("data-id");
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Get",
+                url: '/api/AnswerQuestion/GetAnswerQuestionById?id=' + id,
+                contentType: 'application/json',
+                data: {},
+
+                //cache: false,
+                //contentType: false,
+                //processData: false,
+                success: function (data) {
+
+                    AnswerQuestion = { id: data.resul.id, answer: data.resul.answer, question: data.resul.question };
+                    $("#Answer").val(AnswerQuestion.answer);
+                    $("#Question").val(AnswerQuestion.question);
+                    $("#id").val(AnswerQuestion.id);
+                    $("#createAnswerQuestionButton").click();
+                    isEdit = true;
+                },
+                error: function (data) {
+                    console.log(data)
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+
+                    })
+                }
+            });
+        }
+        function deleteAnswerQuestion(e) {
+            var id = $(e).attr("data-id");
+
+            $.ajax({
+                beforeSend: setAuthHeader,
+                method: "Post",
+                url: '/api/AnswerQuestion/DeleteAnswerQuestion?id=' + id,
+                contentType: 'application/json',
+                data: {},
+
+                //cache: false,
+                //contentType: false,
+                //processData: false,
+                success: function (data) {
+                    if (data.successCode) {
+                        toastr.success(data.message);
+                        GetData('/api/Setting/GetAllSetting', {}, true);
+
+                    }
+                    else {
+                        toastr.error(data.message);
+                    }
+
+                },
+                error: function (data) {
+                    if (data.responseJSON == undefined) {
+                        toastr.error("مشکلی رخ داده است");
+                        return;
+
+                    }
+                    var errors = data.responseJSON.message;
+                    errors.forEach(elem => {
+                        if (elem == "Unauthorized") { elem = "کابر نامعتبر لطفا لاگین کنید" }
+                        if (elem == "Forbidden") { elem = "عدم دسترسی " }
+                        toastr.error(elem);
+
+
+                    })
+                }
+            });
+        }
+        
+
+    </script>
+}
